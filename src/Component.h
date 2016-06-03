@@ -2,12 +2,10 @@
 #define CBA_COMPONENT_H
 
 #include "CBA.h"
-#include <memory>
-#include <functional>
 #include "GUID.h"
 #include "Status.h"
 #include "EventDelegate.h"
-//#include "Interfaces/IApp.h"
+#include "Interfaces/IApp.h"
 
 class IApp;
 

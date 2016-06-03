@@ -36,7 +36,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/511e4115/CBA.o \
-	${OBJECTDIR}/_ext/511e4115/CBA_Build.o \
 	${OBJECTDIR}/_ext/511e4115/Component.o \
 	${OBJECTDIR}/_ext/511e4115/EventDelegate.o \
 	${OBJECTDIR}/_ext/9a3897b4/IApp.o \
@@ -74,11 +73,6 @@ ${OBJECTDIR}/_ext/511e4115/CBA.o: ../src/CBA.cpp
 	${MKDIR} -p ${OBJECTDIR}/_ext/511e4115
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/511e4115/CBA.o ../src/CBA.cpp
-
-${OBJECTDIR}/_ext/511e4115/CBA_Build.o: ../src/CBA_Build.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/511e4115
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/511e4115/CBA_Build.o ../src/CBA_Build.cpp
 
 ${OBJECTDIR}/_ext/511e4115/Component.o: ../src/Component.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/511e4115

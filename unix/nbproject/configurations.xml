@@ -11,7 +11,6 @@
         <itemPath>../src/Platforms/POSIXConsoleApp.h</itemPath>
       </logicalFolder>
       <itemPath>../src/CBA.h</itemPath>
-      <itemPath>../src/CBA_Build.h</itemPath>
       <itemPath>../src/Component.h</itemPath>
       <itemPath>../src/EventDelegate.h</itemPath>
       <itemPath>../src/GUID.h</itemPath>
@@ -31,7 +30,6 @@
         <itemPath>../src/Platforms/POSIXConsoleApp.cpp</itemPath>
       </logicalFolder>
       <itemPath>../src/CBA.cpp</itemPath>
-      <itemPath>../src/CBA_Build.cpp</itemPath>
       <itemPath>../src/Component.cpp</itemPath>
       <itemPath>../src/EventDelegate.cpp</itemPath>
       <itemPath>../src/Status.cpp</itemPath>
@@ -70,10 +68,6 @@
       <item path="../src/CBA.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../src/CBA.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../src/CBA_Build.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="../src/CBA_Build.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../src/Component.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -127,10 +121,6 @@
       <item path="../src/CBA.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="../src/CBA.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="../src/CBA_Build.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="../src/CBA_Build.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="../src/Component.cpp" ex="false" tool="1" flavor2="0">
       </item>
