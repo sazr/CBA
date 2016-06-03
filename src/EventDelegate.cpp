@@ -1,6 +1,3 @@
-#ifdef _WIN32
-	#include "CBA_BUILD.h"
-#endif // _WIN32
 #include "EventDelegate.h"
 
 EventDelegate::EventDelegate(EDelegate delegate, GUID nGUidContext) : delegate(delegate)

@@ -1,8 +1,4 @@
-#ifdef _WIN32
-#include "CBA_BUILD.h"
-#endif // _WIN32
 #include "Component.h"
-//#include "Interfaces/IApp.h"
 
 // Class Property Implementation //
 

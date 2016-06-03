@@ -12,9 +12,13 @@
 #include <memory>
 
 #ifdef _WIN32
+#include <SDKDDKVer.h>
+#define _CRT_SECURE_NO_WARNINGS
+#define WIN32_LEAN_AND_MEAN 
+#include <windows.h>
 #include <tchar.h>
 #else
-#define TCHAR PCHAR
+#define TCHAR cba_char
 #define _T(x) x
 #endif // _WIN32
 
@@ -28,24 +32,17 @@
 #ifndef UNICODE
 typedef std::string tstring;
 typedef std::stringstream tstringstream;
-typedef char PCHAR;
+typedef char cba_char;
 #else
 typedef std::wstring tstring;
 typedef std::wstringstream tstringstream;
-typedef wchar_t PCHAR;
+typedef wchar_t cba_char;
 #endif
 
 //#pragma message("Parameter cannot be reference because it causes undefined behaviour of variadic argument list (according to c++ standard) \nTODO: Wrap output() in namespace")
 void output(const tstring format, ...);
 
 #define outputStr(x) output(_T( x ))
-#define outputArgs(x, y) output(_T( x ), y)
-
-//#include "GUID.h"
-//#include "Status.h"
-//#include "EventDelegate.h"
-
-/*#include "Component.h"
-#include "Interfaces/IApp.h"*/
+#define outputArgs(x, ...) output(_T( x ), ...)
 
 #endif // CBA_H
