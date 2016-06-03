@@ -2,6 +2,7 @@
 #define CBA_WinUtilityComponentCMP_H
 
 #include "../CBA.h"
+#include "../Component.h"
 #include <Psapi.h>
 #pragma comment(lib, "Psapi")
 

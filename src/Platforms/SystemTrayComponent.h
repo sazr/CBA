@@ -1,7 +1,8 @@
-#ifndef WT_SYSTRAYCMP_H
-#define WT_SYSTRAYCMP_H
+#ifndef CBA_SYSTRAYCMP_H
+#define CBA_SYSTRAYCMP_H
 
 #include "../CBA.h"
+#include "../Component.h"
 #include <shellapi.h>
 
 class SystemTrayComponent : public Component
@@ -50,4 +51,4 @@ private:
 
 };
 
-#endif // WT_SYSTRAYCMP_H
+#endif // CBA_SYSTRAYCMP_H

@@ -1,7 +1,8 @@
-#ifndef WT_DPIAWARECMP_H
-#define WT_DPIAWARECMP_H
+#ifndef CBA_DPIAWARECMP_H
+#define CBA_DPIAWARECMP_H
 
 #include "../CBA.h"
+#include "../Component.h"
 #include <ShellScalingAPI.h>
 #pragma comment(lib, "Shcore.lib")
 
@@ -67,4 +68,4 @@ private:
 
 };
 
-#endif // WT_DPIAWARECMP_H
+#endif // CBA_DPIAWARECMP_H

@@ -1,4 +1,3 @@
-#include "CBA_Build.h"
 #include "DispatchWindowComponent.h"
 #include "Win32App.h"
 

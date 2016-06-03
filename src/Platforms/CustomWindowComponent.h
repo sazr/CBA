@@ -1,7 +1,8 @@
-#ifndef WT_CUSTOMWNDCMP_H
-#define WT_CUSTOMWNDCMP_H
+#ifndef CBA_CUSTOMWNDCMP_H
+#define CBA_CUSTOMWNDCMP_H
 
 #include "../CBA.h"
+#include "../Component.h"
 #include "Win32App.h"
 
 class CustomWindowComponent : public Component
@@ -71,4 +72,4 @@ private:
 
 };
 
-#endif // WT_CUSTOMWNDCMP_H
+#endif // CBA_CUSTOMWNDCMP_H

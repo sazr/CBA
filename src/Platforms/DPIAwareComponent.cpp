@@ -1,4 +1,3 @@
-#include "CBA_Build.h"
 #include "DPIAwareComponent.h"
 #include "Win32App.h"
 

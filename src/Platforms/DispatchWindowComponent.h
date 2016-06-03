@@ -2,6 +2,7 @@
 #define CBA_DISPATCHWNDCMP_H
 
 #include "../CBA.h"
+#include "../Component.h"
 
 struct DispatchEventArgs : public IEventArgs
 {

@@ -2,6 +2,7 @@
 #define VK_TOPMOSTWINDOWCMP_H
 
 #include "../CBA.h"
+#include "../Component.h"
 
 class TopMostWindowComponent : public Component
 {

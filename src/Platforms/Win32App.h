@@ -2,6 +2,7 @@
 #define CBA_WIN32APP_H
 
 #include "../CBA.h"
+#include "../Interfaces/IApp.h"
 #include "WinUtilityComponent.h" 
 
 struct Win32AppInit : public IEventArgs
