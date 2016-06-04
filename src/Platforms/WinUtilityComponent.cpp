@@ -1,4 +1,3 @@
-#include "CBA_BUILD.h"
 #include "WinUtilityComponent.h"
 #include "Win32App.h"
 
@@ -65,8 +64,8 @@ Status WinUtilityComponent::getProcessFilePath(DWORD processId, tstring& filePat
 		return S_UNDEFINED_ERROR;
 	}
 
-	HANDLE hModule;
-	DWORD cbNeeded;
+	//HANDLE hModule;
+	//DWORD cbNeeded;
 	TCHAR exePath[MAX_PATH];
 
 	if (GetModuleFileNameEx(hProcess, NULL, exePath, MAX_PATH) == 0){

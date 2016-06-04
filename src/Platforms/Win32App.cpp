@@ -1,5 +1,5 @@
-#include "CBA_BUILD.h"
 #include "Win32App.h"
+//#include "../Component.h"
 
 // Class Property Implementation //
 Status Win32App::S_WND_REGISTER_FAIL	= CStatus::registerState(_T("RegisterClassEx() failure"));
@@ -61,7 +61,7 @@ LRESULT CALLBACK Win32App::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
 
 // Function Implementation //
 Win32App::Win32App() 
-	: IApp(), hwnd(nullptr), hAccelTable(nullptr), cmdShow(1), bkColour(CreateSolidBrush(RGB(50, 50, 50))), 
+	: IApp(), Component(std::weak_ptr<IApp>()), hwnd(nullptr), hAccelTable(nullptr), cmdShow(1), bkColour(CreateSolidBrush(RGB(50, 50, 50))), 
 	wndDimensions({ CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT }), wndFlags(WS_BORDER | WS_CAPTION)
 {
 	
@@ -79,8 +79,7 @@ Status Win32App::init(const IEventArgs& evtArgs)
 	cmdLine = initArgs.cmdLine;
 	cmdShow = initArgs.cmdShow;
 
-	GUID id = addComponent<WinUtilityComponent>(app);
-	util = getComponent<WinUtilityComponent>(id);
+	util = addComponent<WinUtilityComponent>(app);
 
 	registerWindowClass(initArgs);
 

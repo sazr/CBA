@@ -81,11 +81,6 @@
     <ClInclude Include="..\src\EventDelegate.h" />
     <ClInclude Include="..\src\GUID.h" />
     <ClInclude Include="..\src\Interfaces\IApp.h" />
-    <ClInclude Include="..\src\Platforms\CustomWindowComponent.h" />
-    <ClInclude Include="..\src\Platforms\DispatchWindowComponent.h" />
-    <ClInclude Include="..\src\Platforms\DPIAwareComponent.h" />
-    <ClInclude Include="..\src\Platforms\SystemTrayComponent.h" />
-    <ClInclude Include="..\src\Platforms\TopMostWindowComponent.h" />
     <ClInclude Include="..\src\Platforms\Win32App.h" />
     <ClInclude Include="..\src\Platforms\WinUtilityComponent.h" />
     <ClInclude Include="..\src\Status.h" />
@@ -95,11 +90,6 @@
     <ClCompile Include="..\src\Component.cpp" />
     <ClCompile Include="..\src\EventDelegate.cpp" />
     <ClCompile Include="..\src\Interfaces\IApp.cpp" />
-    <ClCompile Include="..\src\Platforms\CustomWindowComponent.cpp" />
-    <ClCompile Include="..\src\Platforms\DispatchWindowComponent.cpp" />
-    <ClCompile Include="..\src\Platforms\DPIAwareComponent.cpp" />
-    <ClCompile Include="..\src\Platforms\SystemTrayComponent.cpp" />
-    <ClCompile Include="..\src\Platforms\TopMostWindowComponent.cpp" />
     <ClCompile Include="..\src\Platforms\Win32App.cpp" />
     <ClCompile Include="..\src\Platforms\WinUtilityComponent.cpp" />
     <ClCompile Include="..\src\Status.cpp" />

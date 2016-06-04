@@ -29,7 +29,7 @@ public:
 	bool operator< (const Component& other) const;
 
 	template<typename T, typename... Params>
-	bool /*GUID*/ addComponent(Params... params);
+	std::shared_ptr<T> addComponent(Params... params);
 
 	template<typename T>
 	std::shared_ptr<T> getComponent(const GUID& gUid);

@@ -22,12 +22,14 @@ bool Component::operator<(const Component& other) const {
 }
 
 template<typename T, typename... Params>
-bool /*GUID*/ Component::addComponent(Params... params) {
+std::shared_ptr<T> Component::addComponent(Params... params) {
     auto cmp = Component::create<T>(params...);
     auto res = components.emplace(cmp->gUid, cmp);
 
-    return res.second;
-    /*if (!res.second) {
+	return res.first->second;
+
+	/*return res.second;
+    if (!res.second) {
             GUID gUid;
             getNullGUID(&gUid);
             return gUid;

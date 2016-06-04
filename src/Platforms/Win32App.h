@@ -2,6 +2,7 @@
 #define CBA_WIN32APP_H
 
 #include "../CBA.h"
+#include "../Component.h"
 #include "../Interfaces/IApp.h"
 #include "WinUtilityComponent.h" 
 
@@ -31,7 +32,7 @@ struct WinEventArgs : public IEventArgs
 };
 
 #pragma message("TODO: How to force all inheriters of IApp to only instantiate by static IApp::create() method")
-class Win32App : public IApp
+class Win32App : public IApp, public Component
 {
 public:
 	//friend class IApp;
