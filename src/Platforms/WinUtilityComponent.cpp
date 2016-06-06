@@ -20,6 +20,9 @@ Status WinUtilityComponent::init(const IEventArgs& evtArgs)
 {
 	//const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 
+	if (!SystemParametersInfo(SPI_GETWORKAREA, NULL, &clientArea, NULL))
+		return S_UNDEFINED_ERROR;
+
 	return S_SUCCESS;
 }
 
@@ -47,7 +50,7 @@ Status WinUtilityComponent::onDisplayChange(const IEventArgs& evtArgs)
 	if (!SystemParametersInfo(SPI_GETWORKAREA, NULL, &clientArea, NULL))
 		return S_UNDEFINED_ERROR;
 
-	output(_T("New Dims: %d, %d, %d, %d, %d, %d, T: %d, T: %d\n"), newW, newH, clientArea.left, clientArea.right, clientArea.top, clientArea.bottom, 
+	output(_T("New Dims: %d, %d, %d, %d, %d, %d, T: %d, T: %d\n"), newW, newH, clientArea.left, clientArea.right, clientArea.top, clientArea.bottom,
 		clientArea.right - clientArea.left, clientArea.bottom - clientArea.top);
 
 	return S_SUCCESS;
@@ -81,10 +84,10 @@ Status WinUtilityComponent::getProcessFilePath(DWORD processId, tstring& filePat
 Status WinUtilityComponent::getINISectionNames(const tstring& absINIPath, std::vector<tstring>& sectionNames)
 {
 	TCHAR sectionNamesBuf[1024];
-	
+
 	if (!GetPrivateProfileSectionNames(sectionNamesBuf, 1024, absINIPath.c_str()))
 		return S_UNDEFINED_ERROR;
-	
+
 	for (TCHAR* p = sectionNamesBuf; *p; ++p)
 	{
 		tstring sectionName(p);
@@ -124,6 +127,9 @@ Status WinUtilityComponent::getINISectionKeyValues(const tstring& absINIPath, co
 
 Status WinUtilityComponent::getClientRect(RECT& clientRect)
 {
+	if (!SystemParametersInfo(SPI_GETWORKAREA, 0, &clientArea, 0))
+		return S_UNDEFINED_ERROR;
+
 	clientRect = clientArea;
 	return S_SUCCESS;
 }
