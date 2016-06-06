@@ -4,6 +4,7 @@
 #include "../CBA.h"
 #include "../Status.h"
 #include "../Interfaces/IApp.h"
+#include "../Component.h"
 
 /*struct POSIXConsoleAppInit : public IEventArgs
 {

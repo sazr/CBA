@@ -1,4 +1,5 @@
 #include "IApp.h"
+//#include "../Component.h"
 
 // Class Property Implementation //
 Status IApp::S_APP_EXIT				= CStatus::registerState(_T("IApp exit"));

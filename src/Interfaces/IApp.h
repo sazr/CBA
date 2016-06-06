@@ -4,9 +4,9 @@
 #include "../CBA.h"
 #include "../Status.h"
 #include "../EventDelegate.h"
-#include "../Component.h"
+//#include "../Component.h"
 
-//class Component;
+class Component;
 
 class IApp //: protected Component
 {
