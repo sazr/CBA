@@ -1,5 +1,4 @@
 #include "DPIAwareComponent.h"
-#include "Win32App.h"
 
 // Class Property Implementation //
 DPIScaleHelper DPIAwareComponent::scaleHelper;

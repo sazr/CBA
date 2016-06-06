@@ -3,6 +3,7 @@
 
 #include "../CBA.h"
 #include "../Component.h"
+#include "Win32App.h"
 #include <ShellScalingAPI.h>
 #pragma comment(lib, "Shcore.lib")
 

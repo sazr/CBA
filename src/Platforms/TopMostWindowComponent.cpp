@@ -1,5 +1,4 @@
 #include "TopMostWindowComponent.h"
-#include "Win32App.h"
 
 // Class Property Implementation //
 

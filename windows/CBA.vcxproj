@@ -19,14 +19,14 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -45,8 +45,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>CBA_Build.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>D:\_Work\Soribo\_TESTS\CBA\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>D:\_Work\Soribo\_TESTS\CBA_git\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -54,6 +56,9 @@
     <PostBuildEvent>
       <Command>copy /y "$(OutDir)CBA.lib" "$(ProjectDir)lib\"</Command>
     </PostBuildEvent>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -63,8 +68,10 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>CBA_Build.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>D:\_Work\Soribo\_TESTS\CBA\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>D:\_Work\Soribo\_TESTS\CBA_git\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -74,6 +81,9 @@
     <PostBuildEvent>
       <Command>copy /y "$(OutDir)CBA.lib" "$(ProjectDir)lib\"</Command>
     </PostBuildEvent>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\src\CBA.h" />
@@ -81,6 +91,12 @@
     <ClInclude Include="..\src\EventDelegate.h" />
     <ClInclude Include="..\src\GUID.h" />
     <ClInclude Include="..\src\Interfaces\IApp.h" />
+    <ClInclude Include="..\src\Platforms\CustomWindowComponent.h" />
+    <ClInclude Include="..\src\Platforms\DispatchWindowComponent.h" />
+    <ClInclude Include="..\src\Platforms\DPIAwareComponent.h" />
+    <ClInclude Include="..\src\Platforms\HorzListBoxComponent.h" />
+    <ClInclude Include="..\src\Platforms\SystemTrayComponent.h" />
+    <ClInclude Include="..\src\Platforms\TopMostWindowComponent.h" />
     <ClInclude Include="..\src\Platforms\Win32App.h" />
     <ClInclude Include="..\src\Platforms\WinUtilityComponent.h" />
     <ClInclude Include="..\src\Status.h" />
@@ -90,9 +106,16 @@
     <ClCompile Include="..\src\Component.cpp" />
     <ClCompile Include="..\src\EventDelegate.cpp" />
     <ClCompile Include="..\src\Interfaces\IApp.cpp" />
+    <ClCompile Include="..\src\Platforms\CustomWindowComponent.cpp" />
+    <ClCompile Include="..\src\Platforms\DispatchWindowComponent.cpp" />
+    <ClCompile Include="..\src\Platforms\DPIAwareComponent.cpp" />
+    <ClCompile Include="..\src\Platforms\HorzListBoxComponent.cpp" />
+    <ClCompile Include="..\src\Platforms\SystemTrayComponent.cpp" />
+    <ClCompile Include="..\src\Platforms\TopMostWindowComponent.cpp" />
     <ClCompile Include="..\src\Platforms\Win32App.cpp" />
     <ClCompile Include="..\src\Platforms\WinUtilityComponent.cpp" />
     <ClCompile Include="..\src\Status.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

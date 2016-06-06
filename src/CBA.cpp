@@ -16,7 +16,7 @@ void output(const tstring format, ...)
 	#ifdef _WIN32
 	const int len = _vsctprintf(format.c_str(), args) + 1;
 	TCHAR* buf = new TCHAR[len];
-	vsprintf_s(buf, len, format.c_str(), args);
+	_vstprintf_s(buf, len, format.c_str(), args);
 	OutputDebugString(buf);
 	delete[] buf;
 	#else

@@ -1,5 +1,4 @@
 #include "SystemTrayComponent.h"
-#include "Win32App.h"
 
 // Class Property Implementation //
 const Status SystemTrayComponent::WM_TRAY_ICON = Status::registerState(_T("System Tray Icon Message"));
@@ -8,7 +7,9 @@ const Status SystemTrayComponent::WM_TRAY_ICON = Status::registerState(_T("Syste
 
 
 // Function Implementation //
-SystemTrayComponent::SystemTrayComponent(const std::weak_ptr<IApp>& app, const tstring smallIconPath, const tstring tooltip) : Component(app), smallIconPath(smallIconPath), tooltip(tooltip)
+SystemTrayComponent::SystemTrayComponent(const std::weak_ptr<IApp>& app, const tstring smallIconPath, const tstring tooltip)
+	: Component(app), smallIconPath(smallIconPath),
+	tooltip(tooltip), trayIconID(Status::registerState(_T("Unique System Tray icon id")))
 {
 	registerEvents();
 }
@@ -21,14 +22,14 @@ SystemTrayComponent::~SystemTrayComponent()
 Status SystemTrayComponent::init(const IEventArgs& evtArgs)
 {
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
-	
+
 	memset(&notifyIconData, 0, sizeof(NOTIFYICONDATA));
 
 	notifyIconData.cbSize = sizeof(NOTIFYICONDATA);
 	notifyIconData.hWnd = args.hwnd;
-	notifyIconData.uID = ID_TRAY_ICON.state;
+	notifyIconData.uID = trayIconID.state;
 	notifyIconData.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP; //  | NIF_GUID;
-	notifyIconData.uCallbackMessage = WM_TRAY_ICON.state; 
+	notifyIconData.uCallbackMessage = WM_TRAY_ICON.state;
 	notifyIconData.hIcon = (HICON)LoadImage(NULL, smallIconPath.c_str(), IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
 	//generateGUID(&notifyIconData.guidItem);
 	//notifyIconData.guidItem = gUid;

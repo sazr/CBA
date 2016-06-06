@@ -3,6 +3,7 @@
 
 #include "../CBA.h"
 #include "../Component.h"
+#include "Win32App.h"
 
 struct DispatchEventArgs : public IEventArgs
 {
@@ -25,6 +26,7 @@ public:
 
 	// Static Variables //
 	static Status WM_DISPATCH_MSG;
+	static Status WM_STOP_PROPAGATION_MSG;
 	static const tstring PROP_DISPATCH_LISTENER;
 
 	// Static Methods //

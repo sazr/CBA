@@ -2,7 +2,6 @@
 #define CBA_CUSTOMWNDCMP_H
 
 #include "../CBA.h"
-#include "../Component.h"
 #include "Win32App.h"
 
 class CustomWindowComponent : public Component
@@ -18,8 +17,8 @@ public:
 	static Status setHWNDComponent(HWND hwnd, T* cmp)
 	{
 		if (!SetProp(hwnd, PROP_HWND_CMP.c_str(), cmp))
-		return S_UNDEFINED_ERROR;
-		
+			return S_UNDEFINED_ERROR;
+
 		std::function<Status(const IEventArgs&)> anon = [&hwnd](const IEventArgs& evtArgs) -> Status {
 			RemoveProp(hwnd, CustomWindowComponent::PROP_HWND_CMP.c_str());
 			return S_SUCCESS;
@@ -38,7 +37,7 @@ public:
 	}
 
 	// Class Variables //
-	
+
 	// Class Methods //
 	virtual ~CustomWindowComponent();
 
@@ -56,10 +55,10 @@ protected:
 	const tstring WND_CLASS_NAME;
 
 	// Class Methods //
-	CustomWindowComponent(const std::weak_ptr<IApp>& app, const tstring wndClassName, WNDPROC wndCallback);
+	CustomWindowComponent(const std::weak_ptr<IApp>& app, const tstring wndClassName, WNDPROC wndCallback, HBRUSH bkColour = NULL);
 
 	Status registerEvents();
-	
+
 private:
 	// Static Variables //
 
@@ -67,6 +66,7 @@ private:
 	Status registerWindowClass(const WinEventArgs& evtArgs);
 
 	// Class Variables //
+	HBRUSH bkColour;
 
 	// Class Methods //
 

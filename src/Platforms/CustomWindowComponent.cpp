@@ -1,5 +1,4 @@
 #include "CustomWindowComponent.h"
-#include "Win32App.h"
 
 // Class Property Implementation //
 const tstring CustomWindowComponent::PROP_HWND_CMP = _T("PROP_HWND_CMP");
@@ -9,20 +8,22 @@ const tstring CustomWindowComponent::PROP_HWND_CMP = _T("PROP_HWND_CMP");
 
 
 // Function Implementation //
-CustomWindowComponent::CustomWindowComponent(const std::weak_ptr<IApp>& app, const tstring wndClassName, WNDPROC wndCallback) : Component(app), WND_CLASS_NAME(wndClassName), wndCallback(wndCallback)
+CustomWindowComponent::CustomWindowComponent(const std::weak_ptr<IApp>& app,
+	const tstring wndClassName, WNDPROC wndCallback, HBRUSH bkColour)
+	: Component(app), WND_CLASS_NAME(wndClassName), wndCallback(wndCallback), bkColour(bkColour)
 {
 	registerEvents();
 }
 
 CustomWindowComponent::~CustomWindowComponent()
 {
-
+	DeleteObject(bkColour);
 }
 
 Status CustomWindowComponent::init(const IEventArgs& evtArgs)
 {
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
-	
+
 	registerWindowClass(args);
 
 	return S_SUCCESS;
@@ -50,7 +51,7 @@ Status CustomWindowComponent::registerWindowClass(const WinEventArgs& evtArgs)
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = evtArgs.hinstance;
 	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW);
+	wcex.hbrBackground = bkColour; // (HBRUSH)(COLOR_WINDOW);
 	wcex.lpszClassName = WND_CLASS_NAME.c_str();
 	//wcex.lpszMenuName = NULL; // MAKEINTRESOURCE(IDC_WT);
 	//wcex.hIcon = LoadIcon(hinstance, MAKEINTRESOURCE(iconID));

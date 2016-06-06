@@ -3,6 +3,7 @@
 
 #include "../CBA.h"
 #include "../Component.h"
+#include "Win32App.h"
 #include <shellapi.h>
 
 class SystemTrayComponent : public Component
@@ -16,7 +17,8 @@ public:
 	// Static Methods //
 
 	// Class Variables //
-	const Status ID_TRAY_ICON = Status::registerState(_T("System Tray Icon ID"));
+	Status ID_TRAY_ICON = Status::registerState(_T("System Tray Icon ID"));
+	Status trayIconID;
 	NOTIFYICONIDENTIFIER identifier;
 
 	// Class Methods //
@@ -39,7 +41,7 @@ protected:
 	SystemTrayComponent(const std::weak_ptr<IApp>& app, const tstring smallIconPath, const tstring tooltip);
 
 	Status registerEvents();
-	
+
 private:
 	// Static Variables //
 

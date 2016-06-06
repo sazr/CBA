@@ -3,6 +3,7 @@
 
 #include "../CBA.h"
 #include "../Component.h"
+#include "Win32App.h"
 
 class TopMostWindowComponent : public Component
 {

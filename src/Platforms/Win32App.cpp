@@ -1,5 +1,4 @@
 #include "Win32App.h"
-//#include "../Component.h"
 
 // Class Property Implementation //
 Status Win32App::S_WND_REGISTER_FAIL	= CStatus::registerState(_T("RegisterClassEx() failure"));

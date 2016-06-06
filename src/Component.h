@@ -29,13 +29,36 @@ public:
 	bool operator< (const Component& other) const;
 
 	template<typename T, typename... Params>
-	std::shared_ptr<T> addComponent(Params... params);
+	std::shared_ptr<T> addComponent(Params... params)
+	{
+		auto cmp = Component::create<T>(params...);
+		auto res = components.emplace(cmp->gUid, cmp);
+
+		if (!res.second)
+			return std::shared_ptr<T>();
+
+		return cmp;
+	}
 
 	template<typename T>
-	std::shared_ptr<T> getComponent(const GUID& gUid);
+	std::shared_ptr<T> getComponent(const GUID& gUid) /*const*/ 
+	{
+		if (components.find(gUid) == components.end())
+			return nullptr; // std::make_shared<T>();
+
+		return std::static_pointer_cast<T>(components[gUid]);
+	}
 
 	template<typename T>
-	Status registerEventLambda(int evtId, std::function<Status(const IEventArgs& evtArgs)> func);
+	Status registerEventLambda(int evtId, std::function<Status(const IEventArgs& evtArgs) > func) 
+	{
+		auto sApp = app.lock();
+		if (!sApp)
+			return S_UNDEFINED_ERROR;
+
+		sApp->registerForEvent(evtId, EventDelegate(func, gUid));
+		return S_SUCCESS;
+	}
         
 protected:
 	std::weak_ptr<IApp> app;
@@ -47,7 +70,16 @@ protected:
 	virtual Status registerEvents() = 0;
 
 	template<typename T>
-	Status registerEvent(const int& evtId, Status (T::*func) (const IEventArgs& evtArgs));
+	Status registerEvent(const int& evtId, Status(T::*func) (const IEventArgs& evtArgs)) 
+	{
+		auto sApp = app.lock();
+		if (!sApp)
+			return S_UNDEFINED_ERROR;
+
+		auto res = std::bind(func, (T*)this, std::placeholders::_1);
+		sApp->registerForEvent(evtId, EventDelegate(res, gUid));
+		return S_SUCCESS;
+	}
 
 private:
 	std::unordered_map<GUID, std::shared_ptr<Component>> components;

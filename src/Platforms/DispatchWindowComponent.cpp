@@ -1,8 +1,8 @@
 #include "DispatchWindowComponent.h"
-#include "Win32App.h"
 
 // Class Property Implementation //
 Status DispatchWindowComponent::WM_DISPATCH_MSG = CStatus::registerState(_T("Custom event. A parent receives child events child event."));
+Status DispatchWindowComponent::WM_STOP_PROPAGATION_MSG = CStatus::registerState(_T("Custom event. Don't propagate message to the windows default callback."));
 const tstring DispatchWindowComponent::PROP_DISPATCH_LISTENER = _T("PROP_DISPATCH_LISTENER");
 
 // Static Function Implementation //
@@ -11,10 +11,11 @@ LRESULT CALLBACK DispatchWindowComponent::dispatchCallback(HWND hwnd, UINT messa
 	int id = GetDlgCtrlID(hwnd);
 	HWND parent = GetParent(hwnd);
 	DispatchWindowComponent* dispatchCmp = static_cast<DispatchWindowComponent*>(GetProp(parent, PROP_DISPATCH_LISTENER.c_str()));
-	
-	const DispatchEventArgs dispatchArgs { parent, hwnd, message, wParam, lParam };
-	Win32App::eventHandler(DispatchWindowComponent::translateMessage(message), dispatchArgs);
-	
+	const DispatchEventArgs dispatchArgs{ parent, hwnd, message, wParam, lParam };
+
+	if (Win32App::eventHandler(DispatchWindowComponent::translateMessage(message), dispatchArgs) == WM_STOP_PROPAGATION_MSG)
+		return NULL;
+
 	if (message == WM_NCDESTROY)
 		RemoveProp(hwnd, PROP_DISPATCH_LISTENER.c_str());
 
@@ -23,7 +24,7 @@ LRESULT CALLBACK DispatchWindowComponent::dispatchCallback(HWND hwnd, UINT messa
 
 int DispatchWindowComponent::translateMessage(UINT message)
 {
-	return WM_DISPATCH_MSG + message;
+	return WM_DISPATCH_MSG * 2 + message;
 }
 
 
@@ -59,7 +60,7 @@ Status DispatchWindowComponent::addDispatcher(HWND child, bool addChildHMENUId)
 {
 	int hwndId = GetDlgCtrlID(child);
 	HWND parent = GetParent(child);
-	
+
 	if (parent == NULL)
 		return S_UNDEFINED_ERROR;
 	if (GetProp(parent, PROP_DISPATCH_LISTENER.c_str()) == NULL)
