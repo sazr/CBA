@@ -45,9 +45,6 @@
     <ClCompile Include="..\..\src\Platforms\HorzListBoxComponent.cpp">
       <Filter>Platforms</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Platforms\POSIXConsoleApp.cpp">
-      <Filter>Platforms</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Platforms\SystemTrayComponent.cpp">
       <Filter>Platforms</Filter>
     </ClCompile>
@@ -93,9 +90,6 @@
       <Filter>Platforms</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Platforms\SystemTrayComponent.h">
-      <Filter>Platforms</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Platforms\POSIXConsoleApp.h">
       <Filter>Platforms</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Platforms\HorzListBoxComponent.h">

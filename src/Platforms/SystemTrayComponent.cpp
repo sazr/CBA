@@ -1,4 +1,6 @@
 #include "SystemTrayComponent.h"
+#include "../Component.h"
+#include "Win32App.h"
 
 // Class Property Implementation //
 const Status SystemTrayComponent::WM_TRAY_ICON = Status::registerState(_T("System Tray Icon Message"));

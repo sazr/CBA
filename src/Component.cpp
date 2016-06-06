@@ -9,8 +9,7 @@
 // Function Implementation //
 
 Component::Component(const std::weak_ptr<IApp>& app) : app(app) {
-	printf("abc\n");
-    generateGUID(gUid);
+	generateGUID(gUid);
 }
 
 Component::~Component() {
