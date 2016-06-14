@@ -52,7 +52,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(OutDir)CBA.lib" "$(ProjectDir)..\lib\"</Command>
+      <Command>copy /y "$(OutDir)CBA.lib" "$(ProjectDir)..\lib\$(Configuration)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -71,7 +71,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(OutDir)CBA.lib" "$(ProjectDir)..\lib\"</Command>
+      <Command>copy /y "$(OutDir)CBA.lib" "$(ProjectDir)..\lib\$(Configuration)\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -82,12 +82,16 @@
     <ClCompile Include="..\..\src\Platforms\CustomWindowComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\DispatchWindowComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\DPIAwareComponent.cpp" />
+    <ClCompile Include="..\..\src\Platforms\DragScrollHandler.cpp" />
     <ClCompile Include="..\..\src\Platforms\HorzListBoxComponent.cpp" />
+    <ClCompile Include="..\..\src\Platforms\ListBoxComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\SystemTrayComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\TopMostWindowComponent.cpp" />
+    <ClCompile Include="..\..\src\Platforms\VertListBoxComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\Win32App.cpp" />
     <ClCompile Include="..\..\src\Platforms\WinUtilityComponent.cpp" />
     <ClCompile Include="..\..\src\Status.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\CBA.h" />
@@ -98,9 +102,13 @@
     <ClInclude Include="..\..\src\Platforms\CustomWindowComponent.h" />
     <ClInclude Include="..\..\src\Platforms\DispatchWindowComponent.h" />
     <ClInclude Include="..\..\src\Platforms\DPIAwareComponent.h" />
+    <ClInclude Include="..\..\src\Platforms\DragScrollHandler.h" />
     <ClInclude Include="..\..\src\Platforms\HorzListBoxComponent.h" />
+    <ClInclude Include="..\..\src\Platforms\IScrollHandler.h" />
+    <ClInclude Include="..\..\src\Platforms\ListBoxComponent.h" />
     <ClInclude Include="..\..\src\Platforms\SystemTrayComponent.h" />
     <ClInclude Include="..\..\src\Platforms\TopMostWindowComponent.h" />
+    <ClInclude Include="..\..\src\Platforms\VertListBoxComponent.h" />
     <ClInclude Include="..\..\src\Platforms\Win32App.h" />
     <ClInclude Include="..\..\src\Platforms\WinUtilityComponent.h" />
     <ClInclude Include="..\..\src\Status.h" />

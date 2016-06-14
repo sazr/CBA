@@ -13,7 +13,7 @@ LRESULT CALLBACK DispatchWindowComponent::dispatchCallback(HWND hwnd, UINT messa
 	DispatchWindowComponent* dispatchCmp = static_cast<DispatchWindowComponent*>(GetProp(parent, PROP_DISPATCH_LISTENER.c_str()));
 	const DispatchEventArgs dispatchArgs{ parent, hwnd, message, wParam, lParam };
 
-	if (Win32App::eventHandler(DispatchWindowComponent::translateMessage(message), dispatchArgs) == WM_STOP_PROPAGATION_MSG)
+	if (Win32App::eventHandler(DispatchWindowComponent::translateMessage(hwnd, message), dispatchArgs) == WM_STOP_PROPAGATION_MSG)
 		return NULL;
 
 	if (message == WM_NCDESTROY)
@@ -22,9 +22,10 @@ LRESULT CALLBACK DispatchWindowComponent::dispatchCallback(HWND hwnd, UINT messa
 	return CallWindowProc(dispatchCmp->originalWndProcs[id], hwnd, message, wParam, lParam);
 }
 
-int DispatchWindowComponent::translateMessage(UINT message)
+int DispatchWindowComponent::translateMessage(HWND hwnd, UINT message)
 {
-	return WM_DISPATCH_MSG * 2 + message;
+	int id = GetDlgCtrlID(hwnd);
+	return WM_DISPATCH_MSG * 2 * id + message;
 }
 
 

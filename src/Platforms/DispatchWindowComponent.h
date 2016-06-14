@@ -31,7 +31,7 @@ public:
 
 	// Static Methods //
 	static LRESULT CALLBACK dispatchCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-	static int translateMessage(UINT message);
+	static int translateMessage(HWND hwnd, UINT message);
 
 	// Class Variables //
 	std::unordered_map<int, WNDPROC> originalWndProcs;

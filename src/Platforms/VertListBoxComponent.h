@@ -1,12 +1,12 @@
-#ifndef CBA_HORZLBCMP_H
-#define CBA_HORZLBCMP_H
+#ifndef CBA_VERTLBCMP_H
+#define CBA_VERTLBCMP_H
 
 #include "../CBA.h"
 #include "ListBoxComponent.h"
 #include "DragScrollHandler.h"
 #include "Win32App.h"
 
-class HorzListBoxComponent : public ListBoxComponent
+class VertListBoxComponent : public ListBoxComponent
 {
 public:
 	friend class Component;
@@ -18,11 +18,9 @@ public:
 	// Class Variables //
 
 	// Class Methods //
-	virtual ~HorzListBoxComponent();
+	virtual ~VertListBoxComponent();
 
 	Status onMouseMove(const WinEventArgs& args) override;
-	Status hoverScroll(int xPos, int yPos, long& scrollPos);
-	Status dragScroll(long pos, long& prevScrollPos, long& distToScroll);
 
 protected:
 	// Static Variables //
@@ -30,13 +28,10 @@ protected:
 	// Static Methods //
 
 	// Class Variables //
-	long scrollSpeed;
-	RECT scrollPrevRect;
-	RECT scrollNextRect;
 
 	// Class Methods //
-	HorzListBoxComponent(const std::weak_ptr<IApp>& app, const RECT& wndDim, HBRUSH bkCol, 
-		unsigned int hMargin, unsigned int vMargin, bool dpiAware = false, DWORD flags = WS_CHILD);
+	VertListBoxComponent(const std::weak_ptr<IApp>& app, const RECT& wndDim, HBRUSH bkCol, 
+		unsigned int hMargin, unsigned int vMargin, bool dpiAware=false, DWORD flags=WS_CHILD);
 
 	Status setMaxDragValue() override;
 	
@@ -53,4 +48,4 @@ private:
 
 };
 
-#endif // CBA_HORZLBCMP_H
+#endif // CBA_VERTLBCMP_H

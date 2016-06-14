@@ -60,6 +60,18 @@
     <ClCompile Include="..\..\src\Interfaces\IApp.cpp">
       <Filter>Interfaces</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Platforms\ListBoxComponent.cpp">
+      <Filter>Platforms</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Platforms\VertListBoxComponent.cpp">
+      <Filter>Platforms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Platforms\DragScrollHandler.cpp">
+      <Filter>Platforms</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\CBA.h">
@@ -102,6 +114,18 @@
       <Filter>Platforms</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Platforms\CustomWindowComponent.h">
+      <Filter>Platforms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platforms\ListBoxComponent.h">
+      <Filter>Platforms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platforms\VertListBoxComponent.h">
+      <Filter>Platforms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platforms\DragScrollHandler.h">
+      <Filter>Platforms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platforms\IScrollHandler.h">
       <Filter>Platforms</Filter>
     </ClInclude>
   </ItemGroup>
