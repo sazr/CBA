@@ -22,10 +22,14 @@ LRESULT CALLBACK DispatchWindowComponent::dispatchCallback(HWND hwnd, UINT messa
 	return CallWindowProc(dispatchCmp->originalWndProcs[id], hwnd, message, wParam, lParam);
 }
 
+int DispatchWindowComponent::translateMessage(int hwndID, UINT message)
+{
+	return WM_DISPATCH_MSG * 2 * hwndID + message;
+}
+
 int DispatchWindowComponent::translateMessage(HWND hwnd, UINT message)
 {
-	int id = GetDlgCtrlID(hwnd);
-	return WM_DISPATCH_MSG * 2 * id + message;
+	return translateMessage(GetDlgCtrlID(hwnd), message);
 }
 
 

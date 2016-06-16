@@ -3,7 +3,6 @@
 
 #include "../CBA.h"
 #include "ListBoxComponent.h"
-#include "DragScrollHandler.h"
 #include "Win32App.h"
 
 class HorzListBoxComponent : public ListBoxComponent
@@ -20,26 +19,17 @@ public:
 	// Class Methods //
 	virtual ~HorzListBoxComponent();
 
-	Status onMouseMove(const WinEventArgs& args) override;
-	Status hoverScroll(int xPos, int yPos, long& scrollPos);
-	Status dragScroll(long pos, long& prevScrollPos, long& distToScroll);
-
 protected:
 	// Static Variables //
 
 	// Static Methods //
 
 	// Class Variables //
-	long scrollSpeed;
-	RECT scrollPrevRect;
-	RECT scrollNextRect;
 
 	// Class Methods //
 	HorzListBoxComponent(const std::weak_ptr<IApp>& app, const RECT& wndDim, HBRUSH bkCol, 
 		unsigned int hMargin, unsigned int vMargin, bool dpiAware = false, DWORD flags = WS_CHILD);
 
-	Status setMaxDragValue() override;
-	
 private:
 	// Static Variables //
 

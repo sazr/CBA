@@ -1,14 +1,13 @@
-#ifndef CBA_DRAGSCROLLERCMP_H
-#define CBA_DRAGSCROLLERCMP_H
+#ifndef CBA_HOVERSCROLLERCMP_H
+#define CBA_HOVERSCROLLERCMP_H
 
 #include "../CBA.h"
 #include "../Component.h"
 #include "IScrollerComponent.h"
 #include "DispatchWindowComponent.h"
-#include "ListBoxComponent.h"
 #include "Win32App.h"
 
-class DragScrollerComponent : public IScrollerComponent
+class HoverScrollerComponent : public IScrollerComponent
 {
 public:
 	friend class Component;
@@ -20,7 +19,7 @@ public:
 	// Class Variables //
 	
 	// Class Methods //
-	virtual ~DragScrollerComponent();
+	virtual ~HoverScrollerComponent();
 
 	Status init(const IEventArgs& evtArgs);
 	Status terminate(const IEventArgs& evtArgs);
@@ -30,25 +29,22 @@ public:
 
 protected:
 	// Static Variables //
-	static const unsigned int DRAG_THRESHOLD = 10;
 
 	// Static Methods //
 
 	// Class Variables //
-	bool lButtonDown;
-	bool isDragging;
-	long xPos;
-	long yPos;
-	long dragDistance;
+	long scrollSpeed;
+	RECT scrollPrevRect;
+	RECT scrollNextRect;
 
 	// Class Methods //
-	DragScrollerComponent(const std::weak_ptr<IApp>& app, STATE hwndId, ScrollDirection scrollDir);
+	HoverScrollerComponent(const std::weak_ptr<IApp>& app, STATE hwndId, ScrollDirection scrollDir);
 
 	Status registerEvents();
 	Status onMouseMove(const IEventArgs& evtArgs);
 	Status onLButtonDown(const IEventArgs& evtArgs);
 	Status onLButtonUp(const IEventArgs& evtArgs);
-	Status dragScroll(HWND hwnd, long pos, long& prevScrollPos);
+	Status hoverScroll(HWND hwnd, int xPos, int yPos);
 	Status onLBAddChild(const IEventArgs& evtArgs);
 
 private:
@@ -62,4 +58,4 @@ private:
 
 };
 
-#endif // CBA_DRAGSCROLLERCMP_H
+#endif // CBA_HOVERSCROLLERCMP_H

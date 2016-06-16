@@ -1,69 +1,47 @@
 #include "ListBoxComponent.h"
 
 // Class Property Implementation //
+Status ListBoxComponent::WM_CUSTOM_LB_ADD_CHILD = Status::registerState(_T("Custom CBA message: add child to CBA::ListBox"));
 
 // Static Function Implementation //
 LRESULT CALLBACK ListBoxComponent::wndCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	ListBoxComponent* cmp = CustomWindowComponent::getHWNDComponent<ListBoxComponent>(hwnd);
-	const WinEventArgs args{ NULL, hwnd, wParam, lParam };
-
-	switch (message)
-	{
-	case WM_LBUTTONDOWN:
-	{
-		cmp->onLButtonDown(args);
-	}
-	break;
-	case WM_LBUTTONUP:
-	{
-
-		cmp->onLButtonUp(args);
-	}
-	break;
-	case WM_MOUSEMOVE:
-	{
-
-		cmp->onMouseMove(args);
-	}
-	break;
-	case WM_COMMAND:
-	{
-		int wmId = LOWORD(wParam);
-
-		Win32App::eventHandler(wmId, args);
-	}
-	break;
-	//case WM_CTLCOLORDLG:
-	//	return (INT_PTR)CreateSolidBrush(RGB(10, 10, 10));  //cmp->getBkColour();
-	//break;
-	//case WM_CTLCOLORSTATIC:
-	//	return (INT_PTR)CreateSolidBrush(RGB(10, 10, 10)); //cmp->getBkColour();
-	//break;
-	default:
-	{
-	}
-	break;
-	}
-
+	const WinEventArgs args { NULL, hwnd, wParam, lParam };
+	IApp::eventHandler(DispatchWindowComponent::translateMessage(hwnd, message), args);
+	
 	return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
 // Function Implementation //
 ListBoxComponent::ListBoxComponent(const std::weak_ptr<IApp>& app, const RECT& wndDim, HBRUSH bkCol,
-	unsigned int hMargin, unsigned int vMargin, IScrollHandler scrollHandler, bool dpiAware, DWORD flags)
+	unsigned int hMargin, unsigned int vMargin, bool dpiAware, DWORD flags)
 	: Component(app),
-	wndDim(wndDim), scrollHandler(scrollHandler), dpiAware(dpiAware), wndFlags(flags), xPos(0), yPos(0), maxDragValue(0), clientDragPos(0),
-	lButtonDown(false), isDragging(false), scrollEnabled(true), bkColour(bkCol), hMargin(hMargin), vMargin(vMargin)
+	wndDim(wndDim), dpiAware(dpiAware), wndFlags(flags),
+	bkColour(bkCol), hMargin(hMargin), vMargin(vMargin),
+	listBoxHwndId(Status::registerState(_T("Listbox hwnd id")))
 {
 	addComponent<CustomWindowComponent>(app, _T("CBA_ListBox"), &ListBoxComponent::wndCallback, bkColour);
 	dispatchCmp = addComponent<DispatchWindowComponent>(app);
 	registerEvents();
 }
 
+ListBoxComponent::ListBoxComponent(const std::weak_ptr<IApp>& app, const RECT& wndDim, HBRUSH bkCol,
+	unsigned int hMargin, unsigned int vMargin, IScrollerComponent::ScrollDirection scrollDir, bool dpiAware, DWORD flags)
+	: ListBoxComponent(app, wndDim, bkCol, hMargin, vMargin, dpiAware, flags)
+	/*Component(app),
+	wndDim(wndDim), dpiAware(dpiAware), wndFlags(flags),
+	bkColour(bkCol), hMargin(hMargin), vMargin(vMargin),
+	listBoxHwndId(Status::registerState(_T("Listbox hwnd id")))*/
+{
+	addComponent<CustomWindowComponent>(app, _T("CBA_ListBox"), &ListBoxComponent::wndCallback, bkColour);
+	dispatchCmp = addComponent<DispatchWindowComponent>(app);
+	scrollerCmp = addComponent<DragScrollerComponent>(app, listBoxHwndId, scrollDir);
+	registerEvents();
+}
+
 ListBoxComponent::~ListBoxComponent()
 {
-	//DeleteObject(bkColour);
+
 }
 
 Status ListBoxComponent::init(const IEventArgs& evtArgs)
@@ -80,11 +58,7 @@ Status ListBoxComponent::init(const IEventArgs& evtArgs)
 	listBox = CreateWindowEx(0, _T("CBA_ListBox"), _T(""),
 		WS_VISIBLE | wndFlags,
 		wndDim.left, wndDim.top, wndDim.right, wndDim.bottom, 
-		args.hwnd, 0, args.hinstance, 0);
-
-	setMaxDragValue(); // maxDragValue = wndDim.right + wndDim.left;
-	
-	CustomWindowComponent::setHWNDComponent<ListBoxComponent>(listBox, this);
+		args.hwnd, (HMENU)listBoxHwndId.state, args.hinstance, 0);
 
 	ShowScrollBar(listBox, SB_HORZ, false);
 	ShowScrollBar(listBox, SB_VERT, false);
@@ -108,41 +82,10 @@ Status ListBoxComponent::onChildMouseMove(const IEventArgs& evtArgs)
 	const DispatchEventArgs& args = static_cast<const DispatchEventArgs&>(evtArgs);
 
 	POINT p = { LOWORD(args.lParam), HIWORD(args.lParam) };
-	//output(_T("P: %ld, %ld\n"), p.x, p.y);
 	int res = MapWindowPoints(args.catalystHwnd, args.hwnd, (LPPOINT)&p, 1);
 
 	const WinEventArgs& translatedArgs{ NULL, args.hwnd, args.wParam, MAKELPARAM(p.x, p.y) };
-	onMouseMove(translatedArgs);
-
-	return S_SUCCESS;
-}
-
-Status ListBoxComponent::onLButtonDown(const WinEventArgs& args)
-{
-	output(_T("DOWN\n"));
-	lButtonDown = true;
-	isDragging = false;
-	xPos = LOWORD(args.lParam);
-	yPos = HIWORD(args.lParam);
-	dragDistance = 0;
-
-	scrollHandler.onMouseDown(args);
-
-	return S_SUCCESS;
-}
-
-Status ListBoxComponent::onLButtonUp(const WinEventArgs& args)
-{
-	output(_T("UP\n"));
-	lButtonDown = false;
-	isDragging = false;
-	xPos = LOWORD(args.lParam);
-	yPos = HIWORD(args.lParam);
-	dragDistance = 0;
-
-	scrollHandler.onMouseUp(args);
-
-	return S_SUCCESS;
+	return IApp::eventHandler(DispatchWindowComponent::translateMessage(args.hwnd, WM_MOUSEMOVE), translatedArgs);
 }
 
 Status ListBoxComponent::onChildLButtonDown(const IEventArgs& evtArgs)
@@ -154,15 +97,13 @@ Status ListBoxComponent::onChildLButtonDown(const IEventArgs& evtArgs)
 	int res = MapWindowPoints(args.catalystHwnd, args.hwnd, (LPPOINT)&p, 1);
 
 	const WinEventArgs& translatedArgs{ NULL, args.hwnd, args.wParam, MAKELPARAM(p.x, p.y) };
-	onLButtonDown(translatedArgs);
-
-	return S_SUCCESS;
+	return IApp::eventHandler(DispatchWindowComponent::translateMessage(args.hwnd, WM_LBUTTONDOWN), translatedArgs);
 }
 
 Status ListBoxComponent::onChildLButtonUp(const IEventArgs& evtArgs)
 {
 	output(_T("CHILD UP\n"));
-	if (isDragging) {
+	/*if (isDragging) {
 		outputStr("Killing propagation\n");
 		const DispatchEventArgs& args = static_cast<const DispatchEventArgs&>(evtArgs);
 
@@ -170,9 +111,10 @@ Status ListBoxComponent::onChildLButtonUp(const IEventArgs& evtArgs)
 		int res = MapWindowPoints(args.catalystHwnd, args.hwnd, (LPPOINT)&p, 1);
 
 		const WinEventArgs& translatedArgs{ NULL, args.hwnd, args.wParam, MAKELPARAM(p.x, p.y) };
-		onLButtonUp(translatedArgs);
+		//onLButtonUp(translatedArgs);
+		IApp::eventHandler(DispatchWindowComponent::translateMessage(args.hwnd, WM_LBUTTONUP), translatedArgs);
 		return DispatchWindowComponent::WM_STOP_PROPAGATION_MSG;
-	}
+	}*/
 
 	return S_SUCCESS;
 }
@@ -228,12 +170,10 @@ Status ListBoxComponent::setListBoxClippingRect(const SIZE& windowDim, const SIZ
 
 void ListBoxComponent::enableScroll()
 {
-	scrollEnabled = true;
-	lButtonDown = false;
-	isDragging = false;
+	
 }
 
 void ListBoxComponent::disableScroll()
 {
-	scrollEnabled = false;
+	
 }

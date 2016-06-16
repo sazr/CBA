@@ -31,6 +31,7 @@ public:
 
 	// Static Methods //
 	static LRESULT CALLBACK dispatchCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+	static int translateMessage(int hwndID, UINT message);
 	static int translateMessage(HWND hwnd, UINT message);
 
 	// Class Variables //

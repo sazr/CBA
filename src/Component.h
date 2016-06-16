@@ -77,8 +77,18 @@ protected:
 			return S_UNDEFINED_ERROR;
 
 		auto res = std::bind(func, (T*)this, std::placeholders::_1);
-		sApp->registerForEvent(evtId, EventDelegate(res, gUid));
-		return S_SUCCESS;
+		return sApp->registerForEvent(evtId, EventDelegate(res, gUid));
+	}
+
+	template<typename T>
+	Status unregisterEvent(const int& evtId, Status(T::*func) (const IEventArgs& evtArgs))
+	{
+		auto sApp = app.lock();
+		if (!sApp)
+			return S_UNDEFINED_ERROR;
+
+		auto res = std::bind(func, (T*)this, std::placeholders::_1);
+		return sApp->unregisterForEvent(evtId, EventDelegate(res, gUid));
 	}
 
 private:

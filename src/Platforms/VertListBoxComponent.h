@@ -3,7 +3,7 @@
 
 #include "../CBA.h"
 #include "ListBoxComponent.h"
-#include "DragScrollHandler.h"
+#include "DragScrollerComponent.h"
 #include "Win32App.h"
 
 class VertListBoxComponent : public ListBoxComponent
@@ -20,8 +20,6 @@ public:
 	// Class Methods //
 	virtual ~VertListBoxComponent();
 
-	Status onMouseMove(const WinEventArgs& args) override;
-
 protected:
 	// Static Variables //
 
@@ -30,10 +28,9 @@ protected:
 	// Class Variables //
 
 	// Class Methods //
+	//template <typename TScrollType>
 	VertListBoxComponent(const std::weak_ptr<IApp>& app, const RECT& wndDim, HBRUSH bkCol, 
 		unsigned int hMargin, unsigned int vMargin, bool dpiAware=false, DWORD flags=WS_CHILD);
-
-	Status setMaxDragValue() override;
 	
 private:
 	// Static Variables //

@@ -69,7 +69,13 @@
     <ClCompile Include="..\..\src\Platforms\VertListBoxComponent.cpp">
       <Filter>Platforms</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Platforms\DragScrollHandler.cpp">
+    <ClCompile Include="..\..\src\Platforms\DragScrollerComponent.cpp">
+      <Filter>Platforms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Platforms\IScrollerComponent.cpp">
+      <Filter>Platforms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Platforms\HoverScrollerComponent.cpp">
       <Filter>Platforms</Filter>
     </ClCompile>
   </ItemGroup>
@@ -122,10 +128,13 @@
     <ClInclude Include="..\..\src\Platforms\VertListBoxComponent.h">
       <Filter>Platforms</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Platforms\DragScrollHandler.h">
+    <ClInclude Include="..\..\src\Platforms\DragScrollerComponent.h">
       <Filter>Platforms</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Platforms\IScrollHandler.h">
+    <ClInclude Include="..\..\src\Platforms\IScrollerComponent.h">
+      <Filter>Platforms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platforms\HoverScrollerComponent.h">
       <Filter>Platforms</Filter>
     </ClInclude>
   </ItemGroup>

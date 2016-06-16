@@ -82,8 +82,10 @@
     <ClCompile Include="..\..\src\Platforms\CustomWindowComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\DispatchWindowComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\DPIAwareComponent.cpp" />
-    <ClCompile Include="..\..\src\Platforms\DragScrollHandler.cpp" />
+    <ClCompile Include="..\..\src\Platforms\DragScrollerComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\HorzListBoxComponent.cpp" />
+    <ClCompile Include="..\..\src\Platforms\HoverScrollerComponent.cpp" />
+    <ClCompile Include="..\..\src\Platforms\IScrollerComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\ListBoxComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\SystemTrayComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\TopMostWindowComponent.cpp" />
@@ -102,9 +104,10 @@
     <ClInclude Include="..\..\src\Platforms\CustomWindowComponent.h" />
     <ClInclude Include="..\..\src\Platforms\DispatchWindowComponent.h" />
     <ClInclude Include="..\..\src\Platforms\DPIAwareComponent.h" />
-    <ClInclude Include="..\..\src\Platforms\DragScrollHandler.h" />
+    <ClInclude Include="..\..\src\Platforms\DragScrollerComponent.h" />
     <ClInclude Include="..\..\src\Platforms\HorzListBoxComponent.h" />
-    <ClInclude Include="..\..\src\Platforms\IScrollHandler.h" />
+    <ClInclude Include="..\..\src\Platforms\HoverScrollerComponent.h" />
+    <ClInclude Include="..\..\src\Platforms\IScrollerComponent.h" />
     <ClInclude Include="..\..\src\Platforms\ListBoxComponent.h" />
     <ClInclude Include="..\..\src\Platforms\SystemTrayComponent.h" />
     <ClInclude Include="..\..\src\Platforms\TopMostWindowComponent.h" />

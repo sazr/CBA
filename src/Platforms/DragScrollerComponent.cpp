@@ -1,113 +1,134 @@
-#include "DPIAwareComponent.h"
+#include "DragScrollerComponent.h"
 
 // Class Property Implementation //
-DPIScaleHelper DPIAwareComponent::scaleHelper;
-bool DPIAwareComponent::initialised = false;
+
 
 // Static Function Implementation //
-int DPIAwareComponent::scaleUnits(int n)
-{
-	if (!initialised || scaleHelper.GetScaleFactor() == UINT_MAX)
-		return -1;
 
-	return scaleHelper.ScaleValue(n);
-}
-
-Status DPIAwareComponent::scaleRect(RECT& rect)
-{
-	if (!initialised || scaleHelper.GetScaleFactor() == UINT_MAX)
-		return S_UNDEFINED_ERROR;
-
-	scaleHelper.ScaleRectangle(&rect);
-	return S_SUCCESS;
-}
 
 // Function Implementation //
-DPIAwareComponent::DPIAwareComponent(const std::weak_ptr<IApp>& app) : Component(app)
+DragScrollerComponent::DragScrollerComponent(const std::weak_ptr<IApp>& app, STATE hwndId, ScrollDirection scrollDir)
+	: IScrollerComponent(app, hwndId, scrollDir), xPos(0), yPos(0), lButtonDown(false), isDragging(false)
 {
-	if (!initialised) {
-		registerEvents();
-		initialised = true;
-	}
+	registerEvents();
 }
 
-DPIAwareComponent::~DPIAwareComponent()
+DragScrollerComponent::~DragScrollerComponent()
 {
 
 }
 
-Status DPIAwareComponent::init(const IEventArgs& evtArgs)
+Status DragScrollerComponent::init(const IEventArgs& evtArgs)
 {
-	HRESULT res = SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 
-	UINT dpiX = 0, dpiY = 0;
-	POINT point{ 1, 1 };
-	HMONITOR hMonitor = MonitorFromPoint(point, MONITOR_DEFAULTTONEAREST);
-	HRESULT hr = GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
+	RECT wndDim;
+	GetClientRect(args.hwnd, &wndDim);
 
-	scaleHelper.SetScaleFactor(dpiX);
+	if (scrollDir == SCROLL_VERT)
+		maxScrollPos = wndDim.bottom + wndDim.top;
+	else maxScrollPos = wndDim.right + wndDim.left;
 
 	return S_SUCCESS;
 }
 
-Status DPIAwareComponent::terminate(const IEventArgs& evtArgs)
+Status DragScrollerComponent::terminate(const IEventArgs& evtArgs)
 {
 
 	return S_SUCCESS;
 }
 
-Status DPIAwareComponent::registerEvents()
+Status DragScrollerComponent::enable()
 {
-	registerEvent(Win32App::WM_CUSTOM_PRE_CREATE.state, &DPIAwareComponent::init);
+	registerEvent(DispatchWindowComponent::translateMessage(hwndId, WM_CREATE), &DragScrollerComponent::init);
+	registerEvent(DispatchWindowComponent::translateMessage(hwndId, ListBoxComponent::WM_CUSTOM_LB_ADD_CHILD), &DragScrollerComponent::onLBAddChild);
+	registerEvent(DispatchWindowComponent::translateMessage(hwndId, WM_MOUSEMOVE), &DragScrollerComponent::onMouseMove);
+	registerEvent(DispatchWindowComponent::translateMessage(hwndId, WM_LBUTTONDOWN), &DragScrollerComponent::onLButtonDown);
+	registerEvent(DispatchWindowComponent::translateMessage(hwndId, WM_LBUTTONUP), &DragScrollerComponent::onLButtonUp);
 	return S_SUCCESS;
 }
 
-// DPIScaleHelper Function Implementation //
-DPIScaleHelper::DPIScaleHelper()
+Status DragScrollerComponent::disable()
 {
-	m_nScaleFactor = UINT_MAX;
+	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, WM_CREATE), &DragScrollerComponent::init);
+	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, ListBoxComponent::WM_CUSTOM_LB_ADD_CHILD), &DragScrollerComponent::onLBAddChild);
+	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, WM_MOUSEMOVE), &DragScrollerComponent::onMouseMove);
+	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, WM_LBUTTONDOWN), &DragScrollerComponent::onLButtonDown);
+	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, WM_LBUTTONUP), &DragScrollerComponent::onLButtonUp);
+	return S_SUCCESS;
 }
 
-UINT DPIScaleHelper::GetScaleFactor()
+Status DragScrollerComponent::registerEvents()
 {
-	return m_nScaleFactor;
+	enable();
+	return S_SUCCESS;
 }
 
-void DPIScaleHelper::SetScaleFactor(__in UINT iDPI)
+Status DragScrollerComponent::onLBAddChild(const IEventArgs& evtArgs)
 {
-	m_nScaleFactor = MulDiv(iDPI, 100, 96);
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
+
+	maxScrollPos = (long)LOWORD(args.wParam);
+	return S_SUCCESS;
 }
 
-int DPIScaleHelper::ScaleValue(int value)
+Status DragScrollerComponent::onMouseMove(const IEventArgs& evtArgs)
 {
-	return MulDiv(value, m_nScaleFactor, 100);
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
+
+	if (scrollDir == SCROLL_VERT)
+		return dragScroll(args.hwnd, HIWORD(args.lParam), yPos);
+	else return dragScroll(args.hwnd, LOWORD(args.lParam), xPos);
 }
 
-void DPIScaleHelper::ScaleRectangle(__inout RECT *pRectangle)
+Status DragScrollerComponent::onLButtonDown(const IEventArgs& evtArgs)
 {
-	// Post: Scale rectangle from raw pixels to relative pixels.
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 	
-	pRectangle->left = ScaleValue(pRectangle->left);
-	pRectangle->right = ScaleValue(pRectangle->right);
-	pRectangle->top = ScaleValue(pRectangle->top);
-	pRectangle->bottom = ScaleValue(pRectangle->bottom);
+	lButtonDown = true;
+	isDragging = false;
+	xPos = LOWORD(args.lParam);
+	yPos = HIWORD(args.lParam);
+	dragDistance = 0;
+	return S_SUCCESS;
 }
 
-void DPIScaleHelper::ScalePoint(__inout POINT *pPoint)
+Status DragScrollerComponent::onLButtonUp(const IEventArgs& evtArgs)
 {
-	// Post: Scale Point from raw pixels to relative pixels.
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 
-	pPoint->x = ScaleValue(pPoint->x);
-	pPoint->y = ScaleValue(pPoint->y);
+	lButtonDown = false;
+	isDragging = false;
+	xPos = LOWORD(args.lParam);
+	yPos = HIWORD(args.lParam);
+	dragDistance = 0;
+	return S_SUCCESS;
 }
 
-HFONT DPIScaleHelper::CreateScaledFont(int nFontHeight)
+Status DragScrollerComponent::dragScroll(HWND hwnd, long pos, long& prevScrollPos)
 {
-	int nScaledFontHeight = ScaleValue(nFontHeight);
-	LOGFONT lf;
-	memset(&lf, 0, sizeof(lf));
-	lf.lfQuality = CLEARTYPE_QUALITY;
-	lf.lfHeight = -nScaledFontHeight;
-	auto hFont = CreateFontIndirect(&lf);
-	return hFont;
+	if (GetKeyState(VK_LBUTTON) >= 0)
+		return S_UNDEFINED_ERROR;
+
+	if (dragDistance > DRAG_THRESHOLD)
+		isDragging = true;
+
+	long distToScroll = prevScrollPos - pos;
+	dragDistance += abs(distToScroll);
+	distToScroll *= 0.9; // move 90% of the distance the user scrolled
+
+	if (clientScrollPos + distToScroll < 0 || clientScrollPos + distToScroll >= maxScrollPos)
+		return S_UNDEFINED_ERROR;
+
+	clientScrollPos += distToScroll;
+	distToScroll = -distToScroll;
+	prevScrollPos = pos;
+
+	ScrollWindowEx(hwnd, (scrollDir == SCROLL_VERT) ? 0 : distToScroll,
+		(scrollDir == SCROLL_VERT) ? distToScroll : 0, 
+		NULL, NULL, NULL, NULL,
+		SW_INVALIDATE | SW_ERASE | SW_SCROLLCHILDREN);
+	UpdateWindow(hwnd);
+
+	return S_SUCCESS;
 }
