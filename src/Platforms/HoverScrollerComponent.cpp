@@ -8,7 +8,7 @@
 
 // Function Implementation //
 HoverScrollerComponent::HoverScrollerComponent(const std::weak_ptr<IApp>& app, STATE hwndId, ScrollDirection scrollDir)
-	: IScrollerComponent(app, hwndId, scrollDir), scrollSpeed(5)
+	: IScrollerComponent(app, hwndId, scrollDir), scrollSpeed(1)
 {
 	registerEvents();
 }
@@ -33,13 +33,17 @@ Status HoverScrollerComponent::terminate(const IEventArgs& evtArgs)
 
 Status HoverScrollerComponent::enable()
 {
-	
+	registerEvent(DispatchWindowComponent::translateMessage(hwndId, ListBoxComponent::WM_CUSTOM_LB_ADD_CHILD), &HoverScrollerComponent::onLBAddChild);
+	registerEvent(DispatchWindowComponent::translateMessage(hwndId, WM_MOUSEMOVE), &HoverScrollerComponent::onMouseMove);
+
 	return S_SUCCESS;
 }
 
 Status HoverScrollerComponent::disable()
 {
-	
+	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, ListBoxComponent::WM_CUSTOM_LB_ADD_CHILD), &HoverScrollerComponent::onLBAddChild);
+	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, WM_MOUSEMOVE), &HoverScrollerComponent::onMouseMove);
+
 	return S_SUCCESS;
 }
 
@@ -114,19 +118,30 @@ Status HoverScrollerComponent::hoverScroll(HWND hwnd, int xPos, int yPos)
 	UpdateWindow(args.hwnd);*/
 
 	// Generic technique
-	POINT p{ xPos, yPos };
+	POINT p { xPos, yPos };
 	long distToScroll;
 
-	if (PtInRect(&scrollPrevRect, p))
-		distToScroll = -scrollSpeed;
-	else if (PtInRect(&scrollNextRect, p))
-		distToScroll = scrollSpeed;
-	else return S_SUCCESS;
+#pragma message("for slow speed only scroll every 5th hover message received")
 
-	// TODO: check whether we are scrolling outside the max
-	if (clientScrollPos + distToScroll < 0 || clientScrollPos + distToScroll >= maxScrollPos)
+	if (PtInRect(&scrollPrevRect, p)) {
+		output(_T("In prev\n"));
+		distToScroll = scrollSpeed;
+	}
+	else if (PtInRect(&scrollNextRect, p)) {
+		output(_T("In next\n"));
+		distToScroll = -scrollSpeed;
+	}
+	else {
+		output(_T("In neither\n")); return S_SUCCESS;
+	}
+
+	if (clientScrollPos + distToScroll < -maxScrollPos || clientScrollPos + distToScroll >= 0) //maxScrollPos)
 		return S_UNDEFINED_ERROR;
 
+	clientScrollPos += distToScroll;
+
+	/*output(_T("Scrolling [%d,%d], %d\n"), (scrollDir == SCROLL_VERT) ? 0 : distToScroll,
+		(scrollDir == SCROLL_VERT) ? distToScroll : 0, clientScrollPos);*/
 	ScrollWindowEx(hwnd, (scrollDir == SCROLL_VERT) ? 0 : distToScroll,
 		(scrollDir == SCROLL_VERT) ? distToScroll : 0,
 		NULL, NULL, NULL, NULL,

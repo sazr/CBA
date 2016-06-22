@@ -5,6 +5,7 @@
 #include "../Component.h"
 #include "IScrollerComponent.h"
 #include "DispatchWindowComponent.h"
+#include "ListBoxComponent.h"
 #include "Win32App.h"
 
 class HoverScrollerComponent : public IScrollerComponent

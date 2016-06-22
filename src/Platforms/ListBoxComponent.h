@@ -6,6 +6,7 @@
 #include "DispatchWindowComponent.h"
 #include "DPIAwareComponent.h"
 #include "DragScrollerComponent.h"
+#include "HoverScrollerComponent.h"
 #include "Win32App.h"
 
 class ListBoxComponent : public Component
@@ -18,8 +19,7 @@ public:
 	static Status WM_CUSTOM_LB_ADD_CHILD;
 
 	// Static Methods //
-	static LRESULT CALLBACK wndCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-
+	
 	// Class Variables //
 
 	// Class Methods //

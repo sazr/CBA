@@ -87,12 +87,14 @@
     <ClCompile Include="..\..\src\Platforms\HoverScrollerComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\IScrollerComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\ListBoxComponent.cpp" />
+    <ClCompile Include="..\..\src\Platforms\ScheduleAppComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\SystemTrayComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\TopMostWindowComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\VertListBoxComponent.cpp" />
     <ClCompile Include="..\..\src\Platforms\Win32App.cpp" />
     <ClCompile Include="..\..\src\Platforms\WinUtilityComponent.cpp" />
     <ClCompile Include="..\..\src\Status.cpp" />
+    <ClCompile Include="..\..\src\Utility\EasyTaskScheduler.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -109,12 +111,14 @@
     <ClInclude Include="..\..\src\Platforms\HoverScrollerComponent.h" />
     <ClInclude Include="..\..\src\Platforms\IScrollerComponent.h" />
     <ClInclude Include="..\..\src\Platforms\ListBoxComponent.h" />
+    <ClInclude Include="..\..\src\Platforms\ScheduleAppComponent.h" />
     <ClInclude Include="..\..\src\Platforms\SystemTrayComponent.h" />
     <ClInclude Include="..\..\src\Platforms\TopMostWindowComponent.h" />
     <ClInclude Include="..\..\src\Platforms\VertListBoxComponent.h" />
     <ClInclude Include="..\..\src\Platforms\Win32App.h" />
     <ClInclude Include="..\..\src\Platforms\WinUtilityComponent.h" />
     <ClInclude Include="..\..\src\Status.h" />
+    <ClInclude Include="..\..\src\Utility\EasyTaskScheduler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

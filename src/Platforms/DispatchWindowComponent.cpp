@@ -3,23 +3,50 @@
 // Class Property Implementation //
 Status DispatchWindowComponent::WM_DISPATCH_MSG = CStatus::registerState(_T("Custom event. A parent receives child events child event."));
 Status DispatchWindowComponent::WM_STOP_PROPAGATION_MSG = CStatus::registerState(_T("Custom event. Don't propagate message to the windows default callback."));
-const tstring DispatchWindowComponent::PROP_DISPATCH_LISTENER = _T("PROP_DISPATCH_LISTENER");
+const tstring DispatchWindowComponent::PROP_ORIG_CALLBACK = _T("PROP_ORIG_CALLBACK");
+const tstring DispatchWindowComponent::PROP_ID = _T("PROP_ID");
 
 // Static Function Implementation //
 LRESULT CALLBACK DispatchWindowComponent::dispatchCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	int id = GetDlgCtrlID(hwnd);
-	HWND parent = GetParent(hwnd);
-	DispatchWindowComponent* dispatchCmp = static_cast<DispatchWindowComponent*>(GetProp(parent, PROP_DISPATCH_LISTENER.c_str()));
-	const DispatchEventArgs dispatchArgs{ parent, hwnd, message, wParam, lParam };
+	int id = (int)GetProp(hwnd, PROP_ID.c_str());
+	WNDPROC origProc = static_cast<WNDPROC>(GetProp(hwnd, PROP_ORIG_CALLBACK.c_str()));
+	//output(_T("DispatchWindowComponent::dispatchCallback message: %d, id: %d\n"), message, id);
+	const WinEventArgs args{ NULL, hwnd, wParam, lParam };
+	Win32App::eventHandler(DispatchWindowComponent::translateMessage(id, message), args);
 
-	if (Win32App::eventHandler(DispatchWindowComponent::translateMessage(hwnd, message), dispatchArgs) == WM_STOP_PROPAGATION_MSG)
-		return NULL;
+	return CallWindowProc(origProc, hwnd, message, wParam, lParam);
+}
 
-	if (message == WM_NCDESTROY)
-		RemoveProp(hwnd, PROP_DISPATCH_LISTENER.c_str());
+LRESULT CALLBACK DispatchWindowComponent::customWndCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	const WinEventArgs args{ NULL, hwnd, wParam, lParam };
+	
+	if (message == WM_NCCREATE) {
+		int id = (int)((CREATESTRUCT*)lParam)->lpCreateParams;
+		SetProp(hwnd, PROP_ID.c_str(), (HANDLE)id);
 
-	return CallWindowProc(dispatchCmp->originalWndProcs[id], hwnd, message, wParam, lParam);
+		/*registerEventLambda<Component>(translateMessage(id, WM_NCDESTROY), [&](const IEventArgs& args)->Status {
+			if (!RemoveProp(hwnd, PROP_ID.c_str()))
+				return S_UNDEFINED_ERROR;
+
+			return S_SUCCESS;
+		});*/
+	}
+	else if (message == WM_COMMAND) {
+		int wmId = LOWORD(wParam);
+		//int wmEvent = HIWORD(wParam);
+		output(_T("WM_COMMAND: %d\n"), wmId);
+
+		if (wmId > 0)
+			Win32App::eventHandler(wmId, args);
+	}
+
+	int id = (int)GetProp(hwnd, PROP_ID.c_str());
+	//output(_T("DispatchWindowComponent::customWndCallback message: %d, id: %d\n"), message, id);
+	Win32App::eventHandler(DispatchWindowComponent::translateMessage(id, message), args);
+
+	return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
 int DispatchWindowComponent::translateMessage(int hwndID, UINT message)
@@ -29,7 +56,8 @@ int DispatchWindowComponent::translateMessage(int hwndID, UINT message)
 
 int DispatchWindowComponent::translateMessage(HWND hwnd, UINT message)
 {
-	return translateMessage(GetDlgCtrlID(hwnd), message);
+	int id = (int)GetProp(hwnd, PROP_ID.c_str());
+	return translateMessage(id /*GetDlgCtrlID(hwnd)*/, message);
 }
 
 
@@ -61,29 +89,33 @@ Status DispatchWindowComponent::registerEvents()
 	return S_SUCCESS;
 }
 
-Status DispatchWindowComponent::addDispatcher(HWND child, bool addChildHMENUId)
+Status DispatchWindowComponent::addDispatcher(HWND hwnd)
 {
-	int hwndId = GetDlgCtrlID(child);
-	HWND parent = GetParent(child);
-
-	if (parent == NULL)
-		return S_UNDEFINED_ERROR;
-	if (GetProp(parent, PROP_DISPATCH_LISTENER.c_str()) == NULL)
-		if (!SetProp(parent, PROP_DISPATCH_LISTENER.c_str(), this))
-			return S_UNDEFINED_ERROR;
+	int hwndId = GetDlgCtrlID(hwnd);
 
 	if (hwndId == 0) {
-		if (!addChildHMENUId)
-			return S_UNDEFINED_ERROR;
-
-		hwndId = Status::registerState(_T("DispatchWindowComponent::addDispatcher: Auto-generated id"));
-		SetWindowLong(child, GWL_ID, hwndId);
+		hwndId = (int)GetProp(hwnd, PROP_ID.c_str());
+		if (hwndId == 0) {
+			hwndId = Status::registerState(_T("DispatchWindowComponent::addDispatcher: Auto-generated id"));
+			SetWindowLongPtr(hwnd, GWLP_ID, (LONG)hwndId);
+		}
 	}
 
-	auto res = originalWndProcs.emplace(hwndId, (WNDPROC)SetWindowLong(child, GWL_WNDPROC, (LONG)dispatchCallback));
-
-	if (!res.second)
+	if (!SetProp(hwnd, PROP_ID.c_str(), (HANDLE)hwndId))
 		return S_UNDEFINED_ERROR;
+
+	if (!SetProp(hwnd, PROP_ORIG_CALLBACK.c_str(), (HANDLE)SetWindowLong(hwnd, GWL_WNDPROC, (LONG)dispatchCallback)))
+		return S_UNDEFINED_ERROR;
+
+	registerEventLambda<Component>(translateMessage(hwndId, WM_NCDESTROY), [&](const IEventArgs& args)->Status {
+		
+		if (!RemoveProp(hwnd, PROP_ORIG_CALLBACK.c_str()))
+			return S_UNDEFINED_ERROR;
+		if (!RemoveProp(hwnd, PROP_ID.c_str()))
+			return S_UNDEFINED_ERROR;
+
+		return S_SUCCESS;
+	});
 
 	return S_SUCCESS;
 }

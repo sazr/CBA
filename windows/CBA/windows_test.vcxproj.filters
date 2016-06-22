@@ -19,6 +19,9 @@
     <Filter Include="Platforms">
       <UniqueIdentifier>{6e69873e-271e-4a3b-9382-55ae08971e87}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{66d57133-5300-4fe1-b133-961ccafe2a32}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\CBA.cpp">
@@ -78,6 +81,12 @@
     <ClCompile Include="..\..\src\Platforms\HoverScrollerComponent.cpp">
       <Filter>Platforms</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Utility\EasyTaskScheduler.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Platforms\ScheduleAppComponent.cpp">
+      <Filter>Platforms</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\CBA.h">
@@ -135,6 +144,12 @@
       <Filter>Platforms</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Platforms\HoverScrollerComponent.h">
+      <Filter>Platforms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Utility\EasyTaskScheduler.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platforms\ScheduleAppComponent.h">
       <Filter>Platforms</Filter>
     </ClInclude>
   </ItemGroup>

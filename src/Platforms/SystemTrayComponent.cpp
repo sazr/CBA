@@ -23,6 +23,7 @@ SystemTrayComponent::~SystemTrayComponent()
 
 Status SystemTrayComponent::init(const IEventArgs& evtArgs)
 {
+	output(_T(" SystemTrayComponent::init\n"));
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 
 	memset(&notifyIconData, 0, sizeof(NOTIFYICONDATA));

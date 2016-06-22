@@ -27,10 +27,12 @@ public:
 	// Static Variables //
 	static Status WM_DISPATCH_MSG;
 	static Status WM_STOP_PROPAGATION_MSG;
-	static const tstring PROP_DISPATCH_LISTENER;
+	static const tstring PROP_ORIG_CALLBACK;
+	static const tstring PROP_ID;
 
 	// Static Methods //
 	static LRESULT CALLBACK dispatchCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+	static LRESULT CALLBACK customWndCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	static int translateMessage(int hwndID, UINT message);
 	static int translateMessage(HWND hwnd, UINT message);
 
@@ -43,7 +45,7 @@ public:
 	Status init(const IEventArgs& evtArgs);
 	Status terminate(const IEventArgs& evtArgs);
 
-	Status addDispatcher(HWND child, bool addChildHMENUId=false);
+	Status addDispatcher(HWND child);
 
 protected:
 	// Static Variables //

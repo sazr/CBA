@@ -15,11 +15,11 @@ LRESULT CALLBACK Win32App::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
 
 	switch (message)
 	{
-	case WM_WINDOWPOSCHANGING:
+	/*case WM_WINDOWPOSCHANGING:
 	{
 		DefWindowProc(hwnd, message, wParam, lParam);
 	}
-	break;
+	break;*/
 	case WM_COMMAND:
 	{
 		int wmId = LOWORD(wParam);

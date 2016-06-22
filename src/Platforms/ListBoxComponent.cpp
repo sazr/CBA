@@ -4,23 +4,16 @@
 Status ListBoxComponent::WM_CUSTOM_LB_ADD_CHILD = Status::registerState(_T("Custom CBA message: add child to CBA::ListBox"));
 
 // Static Function Implementation //
-LRESULT CALLBACK ListBoxComponent::wndCallback(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	const WinEventArgs args { NULL, hwnd, wParam, lParam };
-	IApp::eventHandler(DispatchWindowComponent::translateMessage(hwnd, message), args);
-	
-	return DefWindowProc(hwnd, message, wParam, lParam);
-}
 
 // Function Implementation //
 ListBoxComponent::ListBoxComponent(const std::weak_ptr<IApp>& app, const RECT& wndDim, HBRUSH bkCol,
 	unsigned int hMargin, unsigned int vMargin, bool dpiAware, DWORD flags)
 	: Component(app),
-	wndDim(wndDim), dpiAware(dpiAware), wndFlags(flags),
+	wndDim(wndDim), dpiAware(dpiAware), wndFlags(flags | WS_CHILD),
 	bkColour(bkCol), hMargin(hMargin), vMargin(vMargin),
 	listBoxHwndId(Status::registerState(_T("Listbox hwnd id")))
 {
-	addComponent<CustomWindowComponent>(app, _T("CBA_ListBox"), &ListBoxComponent::wndCallback, bkColour);
+	addComponent<CustomWindowComponent>(app, _T("CBA_ListBox"), &DispatchWindowComponent::customWndCallback /*&ListBoxComponent::wndCallback*/, bkColour);
 	dispatchCmp = addComponent<DispatchWindowComponent>(app);
 	registerEvents();
 }
@@ -28,15 +21,8 @@ ListBoxComponent::ListBoxComponent(const std::weak_ptr<IApp>& app, const RECT& w
 ListBoxComponent::ListBoxComponent(const std::weak_ptr<IApp>& app, const RECT& wndDim, HBRUSH bkCol,
 	unsigned int hMargin, unsigned int vMargin, IScrollerComponent::ScrollDirection scrollDir, bool dpiAware, DWORD flags)
 	: ListBoxComponent(app, wndDim, bkCol, hMargin, vMargin, dpiAware, flags)
-	/*Component(app),
-	wndDim(wndDim), dpiAware(dpiAware), wndFlags(flags),
-	bkColour(bkCol), hMargin(hMargin), vMargin(vMargin),
-	listBoxHwndId(Status::registerState(_T("Listbox hwnd id")))*/
 {
-	addComponent<CustomWindowComponent>(app, _T("CBA_ListBox"), &ListBoxComponent::wndCallback, bkColour);
-	dispatchCmp = addComponent<DispatchWindowComponent>(app);
-	scrollerCmp = addComponent<DragScrollerComponent>(app, listBoxHwndId, scrollDir);
-	registerEvents();
+	scrollerCmp = addComponent<HoverScrollerComponent>(app, listBoxHwndId, scrollDir);
 }
 
 ListBoxComponent::~ListBoxComponent()
@@ -46,9 +32,10 @@ ListBoxComponent::~ListBoxComponent()
 
 Status ListBoxComponent::init(const IEventArgs& evtArgs)
 {
-	output(_T("ListBoxComponent::init\n"));
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
-	
+	bool isPopup = (wndFlags & WS_POPUP) != 0;
+	HMENU menuId = (HMENU)((isPopup) ? 0 : listBoxHwndId.state);
+
 	if (dpiAware) {
 		DPIAwareComponent::scaleRect(wndDim);
 		hMargin = DPIAwareComponent::scaleUnits(hMargin);
@@ -58,7 +45,7 @@ Status ListBoxComponent::init(const IEventArgs& evtArgs)
 	listBox = CreateWindowEx(0, _T("CBA_ListBox"), _T(""),
 		WS_VISIBLE | wndFlags,
 		wndDim.left, wndDim.top, wndDim.right, wndDim.bottom, 
-		args.hwnd, (HMENU)listBoxHwndId.state, args.hinstance, 0);
+		args.hwnd, menuId, args.hinstance, (LPVOID)listBoxHwndId.state);
 
 	ShowScrollBar(listBox, SB_HORZ, false);
 	ShowScrollBar(listBox, SB_VERT, false);
@@ -79,25 +66,27 @@ Status ListBoxComponent::registerEvents()
 
 Status ListBoxComponent::onChildMouseMove(const IEventArgs& evtArgs)
 {
-	const DispatchEventArgs& args = static_cast<const DispatchEventArgs&>(evtArgs);
+	//const DispatchEventArgs& args = static_cast<const DispatchEventArgs&>(evtArgs);
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 
 	POINT p = { LOWORD(args.lParam), HIWORD(args.lParam) };
-	int res = MapWindowPoints(args.catalystHwnd, args.hwnd, (LPPOINT)&p, 1);
+	int res = MapWindowPoints(args.hwnd, listBox, (LPPOINT)&p, 1);
 
-	const WinEventArgs& translatedArgs{ NULL, args.hwnd, args.wParam, MAKELPARAM(p.x, p.y) };
-	return IApp::eventHandler(DispatchWindowComponent::translateMessage(args.hwnd, WM_MOUSEMOVE), translatedArgs);
+	const WinEventArgs& translatedArgs{ NULL, listBox, args.wParam, MAKELPARAM(p.x, p.y) };
+	return IApp::eventHandler(DispatchWindowComponent::translateMessage(listBox, WM_MOUSEMOVE), translatedArgs);
 }
 
 Status ListBoxComponent::onChildLButtonDown(const IEventArgs& evtArgs)
 {
 	output(_T("CHILD DOWN\n"));
-	const DispatchEventArgs& args = static_cast<const DispatchEventArgs&>(evtArgs);
+	//const DispatchEventArgs& args = static_cast<const DispatchEventArgs&>(evtArgs);
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 
 	POINT p = { LOWORD(args.lParam), HIWORD(args.lParam) };
-	int res = MapWindowPoints(args.catalystHwnd, args.hwnd, (LPPOINT)&p, 1);
+	int res = MapWindowPoints(args.hwnd, listBox, (LPPOINT)&p, 1);
 
-	const WinEventArgs& translatedArgs{ NULL, args.hwnd, args.wParam, MAKELPARAM(p.x, p.y) };
-	return IApp::eventHandler(DispatchWindowComponent::translateMessage(args.hwnd, WM_LBUTTONDOWN), translatedArgs);
+	const WinEventArgs& translatedArgs{ NULL, listBox, args.wParam, MAKELPARAM(p.x, p.y) };
+	return IApp::eventHandler(DispatchWindowComponent::translateMessage(listBox, WM_LBUTTONDOWN), translatedArgs);
 }
 
 Status ListBoxComponent::onChildLButtonUp(const IEventArgs& evtArgs)
@@ -130,7 +119,7 @@ Status ListBoxComponent::addChild(HWND child, unsigned int insertionIndex)
 Status ListBoxComponent::setupListener(HWND child)
 {
 	SetParent(child, listBox);
-	dispatchCmp->addDispatcher(child, true);
+	dispatchCmp->addDispatcher(child);
 
 	registerEvent(DispatchWindowComponent::translateMessage(child, WM_MOUSEMOVE), &ListBoxComponent::onChildMouseMove);
 	registerEvent(DispatchWindowComponent::translateMessage(child, WM_LBUTTONDOWN), &ListBoxComponent::onChildLButtonDown);
@@ -170,10 +159,16 @@ Status ListBoxComponent::setListBoxClippingRect(const SIZE& windowDim, const SIZ
 
 void ListBoxComponent::enableScroll()
 {
-	
+	if (scrollerCmp == NULL)
+		return;
+
+	scrollerCmp->enable();
 }
 
 void ListBoxComponent::disableScroll()
 {
-	
+	if (scrollerCmp == NULL)
+		return;
+
+	scrollerCmp->disable();
 }
