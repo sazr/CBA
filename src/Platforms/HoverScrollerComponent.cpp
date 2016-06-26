@@ -1,14 +1,14 @@
 #include "HoverScrollerComponent.h"
 
 // Class Property Implementation //
-
+unsigned int HoverScrollerComponent::SCROLL_DELAY = 500;
 
 // Static Function Implementation //
 
 
 // Function Implementation //
 HoverScrollerComponent::HoverScrollerComponent(const std::weak_ptr<IApp>& app, STATE hwndId, ScrollDirection scrollDir)
-	: IScrollerComponent(app, hwndId, scrollDir), scrollSpeed(1)
+	: IScrollerComponent(app, hwndId, scrollDir), scrollSpeed(1), timerSet(false), canScroll(false)
 {
 	registerEvents();
 }
@@ -35,6 +35,9 @@ Status HoverScrollerComponent::enable()
 {
 	registerEvent(DispatchWindowComponent::translateMessage(hwndId, ListBoxComponent::WM_CUSTOM_LB_ADD_CHILD), &HoverScrollerComponent::onLBAddChild);
 	registerEvent(DispatchWindowComponent::translateMessage(hwndId, WM_MOUSEMOVE), &HoverScrollerComponent::onMouseMove);
+	registerEvent(DispatchWindowComponent::translateMessage(hwndId, WM_MOUSELEAVE), &HoverScrollerComponent::onMouseLeave);
+	registerEvent(DispatchWindowComponent::translateMessage(hwndId, WM_SHOWWINDOW), &HoverScrollerComponent::onShow);
+	registerEvent(DispatchWindowComponent::translateMessage(hwndId, WM_TIMER), &HoverScrollerComponent::onTimer);
 
 	return S_SUCCESS;
 }
@@ -43,8 +46,18 @@ Status HoverScrollerComponent::disable()
 {
 	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, ListBoxComponent::WM_CUSTOM_LB_ADD_CHILD), &HoverScrollerComponent::onLBAddChild);
 	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, WM_MOUSEMOVE), &HoverScrollerComponent::onMouseMove);
-
+	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, WM_MOUSELEAVE), &HoverScrollerComponent::onMouseLeave);
+	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, WM_SHOWWINDOW), &HoverScrollerComponent::onShow);
+	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, WM_TIMER), &HoverScrollerComponent::onTimer);
+	
 	return S_SUCCESS;
+}
+
+void HoverScrollerComponent::reset(HWND hwnd)
+{
+	KillTimer(hwnd, GetDlgCtrlID(hwnd));
+	canScroll = false;
+	timerSet = false;
 }
 
 Status HoverScrollerComponent::registerEvents()
@@ -77,6 +90,15 @@ Status HoverScrollerComponent::onLBAddChild(const IEventArgs& evtArgs)
 	return S_SUCCESS;
 }
 
+Status HoverScrollerComponent::onShow(const IEventArgs& evtArgs)
+{
+	outputStr("SHOW\n");
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
+	reset(args.hwnd);
+
+	return S_SUCCESS;
+}
+
 Status HoverScrollerComponent::onMouseMove(const IEventArgs& evtArgs)
 {
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
@@ -84,16 +106,37 @@ Status HoverScrollerComponent::onMouseMove(const IEventArgs& evtArgs)
 	return hoverScroll(args.hwnd, LOWORD(args.lParam), HIWORD(args.lParam));
 }
 
+Status HoverScrollerComponent::onMouseLeave(const IEventArgs& evtArgs)
+{
+	outputStr("MOUSE_LEAVE\n");
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
+	reset(args.hwnd);
+
+	return S_SUCCESS;
+}
+
 Status HoverScrollerComponent::onLButtonDown(const IEventArgs& evtArgs)
 {
-	//const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
+	reset(args.hwnd);
 
 	return S_SUCCESS;
 }
 
 Status HoverScrollerComponent::onLButtonUp(const IEventArgs& evtArgs)
 {
-	//const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
+	reset(args.hwnd);
+
+	return S_SUCCESS;
+}
+
+Status HoverScrollerComponent::onTimer(const IEventArgs& evtArgs)
+{
+	outputStr("onTimer\n");
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
+	
+	canScroll = true;
 
 	return S_SUCCESS;
 }
@@ -121,18 +164,36 @@ Status HoverScrollerComponent::hoverScroll(HWND hwnd, int xPos, int yPos)
 	POINT p { xPos, yPos };
 	long distToScroll;
 
-#pragma message("for slow speed only scroll every 5th hover message received")
-
 	if (PtInRect(&scrollPrevRect, p)) {
-		output(_T("In prev\n"));
+		if (!timerSet) {
+			SetTimer(hwnd, GetDlgCtrlID(hwnd), SCROLL_DELAY, NULL);
+			timerSet = true;
+		}
+
+		if (!canScroll)
+			return S_SUCCESS;
+
+		//output(_T("In prev\n"));
 		distToScroll = scrollSpeed;
 	}
 	else if (PtInRect(&scrollNextRect, p)) {
-		output(_T("In next\n"));
+		if (!timerSet) {
+			SetTimer(hwnd, GetDlgCtrlID(hwnd), SCROLL_DELAY, NULL);
+			timerSet = true;
+		}
+
+		if (!canScroll)
+			return S_SUCCESS;
+
+		//output(_T("In next\n"));
 		distToScroll = -scrollSpeed;
 	}
 	else {
-		output(_T("In neither\n")); return S_SUCCESS;
+		//output(_T("In neither\n")); 
+		KillTimer(hwnd, GetDlgCtrlID(hwnd));
+		canScroll = false;
+		timerSet = false;
+		return S_SUCCESS;
 	}
 
 	if (clientScrollPos + distToScroll < -maxScrollPos || clientScrollPos + distToScroll >= 0) //maxScrollPos)

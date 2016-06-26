@@ -22,7 +22,7 @@ ListBoxComponent::ListBoxComponent(const std::weak_ptr<IApp>& app, const RECT& w
 	unsigned int hMargin, unsigned int vMargin, IScrollerComponent::ScrollDirection scrollDir, bool dpiAware, DWORD flags)
 	: ListBoxComponent(app, wndDim, bkCol, hMargin, vMargin, dpiAware, flags)
 {
-	scrollerCmp = addComponent<HoverScrollerComponent>(app, listBoxHwndId, scrollDir);
+	scrollerCmp = addComponent<DragScrollerComponent>(app, listBoxHwndId, scrollDir);
 }
 
 ListBoxComponent::~ListBoxComponent()
@@ -105,6 +105,14 @@ Status ListBoxComponent::onChildLButtonUp(const IEventArgs& evtArgs)
 		return DispatchWindowComponent::WM_STOP_PROPAGATION_MSG;
 	}*/
 
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
+
+	POINT p = { LOWORD(args.lParam), HIWORD(args.lParam) };
+	int res = MapWindowPoints(args.hwnd, listBox, (LPPOINT)&p, 1);
+
+	const WinEventArgs& translatedArgs{ NULL, listBox, args.wParam, MAKELPARAM(p.x, p.y) };
+	return IApp::eventHandler(DispatchWindowComponent::translateMessage(listBox, WM_LBUTTONUP), translatedArgs);
+
 	return S_SUCCESS;
 }
 
@@ -171,4 +179,9 @@ void ListBoxComponent::disableScroll()
 		return;
 
 	scrollerCmp->disable();
+}
+
+unsigned int ListBoxComponent::size()
+{
+	return children.size();
 }

@@ -68,6 +68,7 @@ Status DragScrollerComponent::onLBAddChild(const IEventArgs& evtArgs)
 {
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 
+	output(_T("[%d, %d]\n"), maxScrollPos, (long)LOWORD(args.wParam));
 	maxScrollPos = (long)LOWORD(args.wParam);
 	return S_SUCCESS;
 }
@@ -83,26 +84,35 @@ Status DragScrollerComponent::onMouseMove(const IEventArgs& evtArgs)
 
 Status DragScrollerComponent::onLButtonDown(const IEventArgs& evtArgs)
 {
+	STATE res = S_SUCCESS.state;
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 	
+	//res = DispatchWindowComponent::WM_STOP_PROPAGATION_MSG.state;
 	lButtonDown = true;
 	isDragging = false;
 	xPos = LOWORD(args.lParam);
 	yPos = HIWORD(args.lParam);
 	dragDistance = 0;
-	return S_SUCCESS;
+	return Status(res);
 }
 
 Status DragScrollerComponent::onLButtonUp(const IEventArgs& evtArgs)
 {
+	output(_T("DragScrollerComponent::onLButtonUp\n"));
+	STATE res = S_SUCCESS.state;
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
+
+	if (isDragging) {
+		output(_T("Killing propagation\n"));
+		res = DispatchWindowComponent::WM_STOP_PROPAGATION_MSG.state;
+	}
 
 	lButtonDown = false;
 	isDragging = false;
 	xPos = LOWORD(args.lParam);
 	yPos = HIWORD(args.lParam);
 	dragDistance = 0;
-	return S_SUCCESS;
+	return Status(res);
 }
 
 Status DragScrollerComponent::dragScroll(HWND hwnd, long pos, long& prevScrollPos)

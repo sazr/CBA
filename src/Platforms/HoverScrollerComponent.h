@@ -14,6 +14,7 @@ public:
 	friend class Component;
 
 	// Static Variables //
+	static unsigned int SCROLL_DELAY;
 
 	// Static Methods //
 
@@ -34,6 +35,8 @@ protected:
 	// Static Methods //
 
 	// Class Variables //
+	bool timerSet;
+	bool canScroll;
 	long scrollSpeed;
 	RECT scrollPrevRect;
 	RECT scrollNextRect;
@@ -42,11 +45,16 @@ protected:
 	HoverScrollerComponent(const std::weak_ptr<IApp>& app, STATE hwndId, ScrollDirection scrollDir);
 
 	Status registerEvents();
+	Status onShow(const IEventArgs& evtArgs);
 	Status onMouseMove(const IEventArgs& evtArgs);
+	Status onMouseLeave(const IEventArgs& evtArgs);
 	Status onLButtonDown(const IEventArgs& evtArgs);
 	Status onLButtonUp(const IEventArgs& evtArgs);
+	Status onTimer(const IEventArgs& evtArgs);
 	Status hoverScroll(HWND hwnd, int xPos, int yPos);
 	Status onLBAddChild(const IEventArgs& evtArgs);
+
+	void reset(HWND hwnd);
 
 private:
 	// Static Variables //

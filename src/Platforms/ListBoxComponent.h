@@ -15,7 +15,7 @@ public:
 	friend class Component;
 
 	// Static Variables //
-	static const unsigned int DRAG_THRESHOLD = 10;
+	//static const unsigned int DRAG_THRESHOLD = 10;
 	static Status WM_CUSTOM_LB_ADD_CHILD;
 
 	// Static Methods //
@@ -28,9 +28,6 @@ public:
 	Status init(const IEventArgs& evtArgs);
 	Status terminate(const IEventArgs& evtArgs);
 
-	void enableScroll();
-	void disableScroll();
-
 	Status onChildMouseMove(const IEventArgs& evtArgs);
 	Status onChildLButtonDown(const IEventArgs& evtArgs);
 	Status onChildLButtonUp(const IEventArgs& evtArgs);
@@ -38,9 +35,26 @@ public:
 	Status addChild(HWND child, unsigned int insertionIndex = UINT_MAX);
 	Status setListBoxClippingRect(const SIZE& windowDim, const SIZE& clientScroll);
 
+	void enableScroll();
+	void disableScroll();
+
 	HWND getHwnd();
 	void setHwnd(HWND hwnd);
 	HBRUSH getBkColour();
+	unsigned int size();
+
+	template <typename T>
+	Status setScroller(IScrollerComponent::ScrollDirection scrollDir)
+	{
+		if (scrollerCmp != NULL) {
+			scrollerCmp->disable();
+			#pragma message("TODO: implement removeComponent() to delete old ScrollerCmp")
+		}
+
+		scrollerCmp = addComponent<T>(app, listBoxHwndId, scrollDir);
+		//scrollerCmp->init(NULL_ARGS);
+		return S_SUCCESS;
+	}
 
 protected:
 	// Static Variables //

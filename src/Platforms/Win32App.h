@@ -5,6 +5,7 @@
 #include "../Component.h"
 #include "../Interfaces/IApp.h"
 #include "WinUtilityComponent.h" 
+#include "DispatchWindowComponent.h"
 
 struct Win32AppInit : public IEventArgs
 {

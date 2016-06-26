@@ -13,7 +13,9 @@ LRESULT CALLBACK DispatchWindowComponent::dispatchCallback(HWND hwnd, UINT messa
 	WNDPROC origProc = static_cast<WNDPROC>(GetProp(hwnd, PROP_ORIG_CALLBACK.c_str()));
 	//output(_T("DispatchWindowComponent::dispatchCallback message: %d, id: %d\n"), message, id);
 	const WinEventArgs args{ NULL, hwnd, wParam, lParam };
-	Win32App::eventHandler(DispatchWindowComponent::translateMessage(id, message), args);
+	
+	if (Win32App::eventHandler(DispatchWindowComponent::translateMessage(id, message), args) == WM_STOP_PROPAGATION_MSG)
+		return DefWindowProc(hwnd, message, wParam, lParam);
 
 	return CallWindowProc(origProc, hwnd, message, wParam, lParam);
 }
@@ -22,24 +24,46 @@ LRESULT CALLBACK DispatchWindowComponent::customWndCallback(HWND hwnd, UINT mess
 {
 	const WinEventArgs args{ NULL, hwnd, wParam, lParam };
 	
-	if (message == WM_NCCREATE) {
+	switch (message)
+	{
+	case WM_NCCREATE:
+	{
 		int id = (int)((CREATESTRUCT*)lParam)->lpCreateParams;
 		SetProp(hwnd, PROP_ID.c_str(), (HANDLE)id);
 
 		/*registerEventLambda<Component>(translateMessage(id, WM_NCDESTROY), [&](const IEventArgs& args)->Status {
 			if (!RemoveProp(hwnd, PROP_ID.c_str()))
-				return S_UNDEFINED_ERROR;
+			return S_UNDEFINED_ERROR;
 
 			return S_SUCCESS;
-		});*/
+			});*/
 	}
-	else if (message == WM_COMMAND) {
+	break;
+	case WM_COMMAND:
+	{
 		int wmId = LOWORD(wParam);
 		//int wmEvent = HIWORD(wParam);
 		output(_T("WM_COMMAND: %d\n"), wmId);
 
 		if (wmId > 0)
 			Win32App::eventHandler(wmId, args);
+	}
+	break;
+	case WM_DRAWITEM:
+	{
+		int wmId = LOWORD(wParam);
+		output(_T("WM_DRAWITEM: %d\n"), wmId);
+
+		if (wmId > 0)
+			Win32App::eventHandler(translateMessage(wmId, WM_DRAWITEM), args);
+	}
+	break;
+	case WM_TIMER:
+	{
+		Win32App::eventHandler(translateMessage(wParam, WM_TIMER), args);
+	}
+	break;
+	default: {} break;
 	}
 
 	int id = (int)GetProp(hwnd, PROP_ID.c_str());

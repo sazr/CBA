@@ -38,6 +38,20 @@ LRESULT CALLBACK Win32App::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
 		}
 	}
 	break;
+	case WM_DRAWITEM:
+	{
+		int wmId = LOWORD(wParam);
+		output(_T("WM_DRAWITEM: %d\n"), wmId);
+
+		if (wmId > 0)
+			Win32App::eventHandler(DispatchWindowComponent::translateMessage(wmId, WM_DRAWITEM), args);
+	}
+	break;
+	case WM_TIMER:
+	{
+		Win32App::eventHandler(DispatchWindowComponent::translateMessage(wParam, WM_TIMER), args);
+	}
+	break;
 	case WM_CLOSE:
 	{
 		DestroyWindow(hwnd);
