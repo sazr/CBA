@@ -96,7 +96,7 @@ Status Win32App::init(const IEventArgs& evtArgs)
 
 	registerWindowClass(initArgs);
 
-	eventHandler(WM_CUSTOM_PRE_CREATE, NULL_ARGS);
+	eventHandler(WM_CUSTOM_PRE_CREATE, initArgs);
 
 	initInstance(initArgs);
 

@@ -20,7 +20,14 @@ HoverScrollerComponent::~HoverScrollerComponent()
 
 Status HoverScrollerComponent::init(const IEventArgs& evtArgs)
 {
-	//const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
+
+	RECT wndDim;
+	GetClientRect(args.hwnd, &wndDim);
+
+	if (scrollDir == SCROLL_VERT)
+		maxScrollPos -= wndDim.bottom + wndDim.top;
+	else maxScrollPos -= wndDim.right + wndDim.left;
 
 	return S_SUCCESS;
 }
@@ -33,6 +40,7 @@ Status HoverScrollerComponent::terminate(const IEventArgs& evtArgs)
 
 Status HoverScrollerComponent::enable()
 {
+	registerEvent(DispatchWindowComponent::translateMessage(hwndId, WM_CREATE), &HoverScrollerComponent::init);
 	registerEvent(DispatchWindowComponent::translateMessage(hwndId, ListBoxComponent::WM_CUSTOM_LB_ADD_CHILD), &HoverScrollerComponent::onLBAddChild);
 	registerEvent(DispatchWindowComponent::translateMessage(hwndId, WM_MOUSEMOVE), &HoverScrollerComponent::onMouseMove);
 	registerEvent(DispatchWindowComponent::translateMessage(hwndId, WM_MOUSELEAVE), &HoverScrollerComponent::onMouseLeave);
@@ -44,6 +52,7 @@ Status HoverScrollerComponent::enable()
 
 Status HoverScrollerComponent::disable()
 {
+	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, WM_CREATE), &HoverScrollerComponent::init);
 	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, ListBoxComponent::WM_CUSTOM_LB_ADD_CHILD), &HoverScrollerComponent::onLBAddChild);
 	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, WM_MOUSEMOVE), &HoverScrollerComponent::onMouseMove);
 	unregisterEvent(DispatchWindowComponent::translateMessage(hwndId, WM_MOUSELEAVE), &HoverScrollerComponent::onMouseLeave);
@@ -63,6 +72,7 @@ void HoverScrollerComponent::reset(HWND hwnd)
 Status HoverScrollerComponent::registerEvents()
 {
 	enable();
+
 	return S_SUCCESS;
 }
 
@@ -74,7 +84,7 @@ Status HoverScrollerComponent::onLBAddChild(const IEventArgs& evtArgs)
 	GetClientRect(args.hwnd, &wndDim);
 	long w = wndDim.right - wndDim.left;
 	long h = wndDim.bottom - wndDim.top;
-	maxScrollPos = (long)LOWORD(args.wParam);
+	maxScrollPos += (long)LOWORD(args.wParam);
 
 	if (scrollDir == SCROLL_VERT) {
 		scrollPrevRect = { wndDim.left, wndDim.top, wndDim.right, wndDim.top + h*0.25 };
@@ -136,6 +146,8 @@ Status HoverScrollerComponent::onTimer(const IEventArgs& evtArgs)
 	outputStr("onTimer\n");
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 	
+	//reset(args.hwnd);
+	KillTimer(args.hwnd, GetDlgCtrlID(args.hwnd));
 	canScroll = true;
 
 	return S_SUCCESS;

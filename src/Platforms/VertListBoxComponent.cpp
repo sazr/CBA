@@ -36,10 +36,11 @@ Status VertListBoxComponent::appendChild(HWND child)
 	BOOL res2 = GetClientRect(child, &dim);
 	childY += vMargin + (dim.bottom - dim.top);
 
-	long maxDragValue = childY - (vertContainerDim.bottom - vertContainerDim.top);
+	//long maxDragValue = childY - (vertContainerDim.bottom - vertContainerDim.top);
+	long widthIncrease = vMargin + (dim.bottom - dim.top);
 	children.push_back(child);
 
-	const WinEventArgs args = { NULL, listBox, MAKEWPARAM(maxDragValue, 0), (LPARAM)child };
+	const WinEventArgs args = { NULL, listBox, MAKEWPARAM(widthIncrease, 0), (LPARAM)child };
 	IApp::eventHandler(DispatchWindowComponent::translateMessage(listBox, WM_CUSTOM_LB_ADD_CHILD), args);
 
 	return S_SUCCESS;
@@ -73,10 +74,11 @@ Status VertListBoxComponent::insertChild(HWND child, unsigned int insertionIndex
 		childY += vMargin + (cDim.bottom - cDim.top);
 	}
 
-	long maxDragValue = childY - (vertContainerDim.bottom - vertContainerDim.top);
+	//long maxDragValue = childY - (vertContainerDim.bottom - vertContainerDim.top);
+	long widthIncrease = vMargin + (dim.bottom - dim.top);
 	children.insert(children.begin() + insertionIndex, child);
 
-	const WinEventArgs args = { NULL, listBox, MAKEWPARAM(maxDragValue, 0), (LPARAM)child };
+	const WinEventArgs args = { NULL, listBox, MAKEWPARAM(widthIncrease, 0), (LPARAM)child };
 	IApp::eventHandler(DispatchWindowComponent::translateMessage(listBox, WM_CUSTOM_LB_ADD_CHILD), args);
 
 	return S_SUCCESS;

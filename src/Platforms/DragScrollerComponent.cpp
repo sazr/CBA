@@ -26,8 +26,8 @@ Status DragScrollerComponent::init(const IEventArgs& evtArgs)
 	GetClientRect(args.hwnd, &wndDim);
 
 	if (scrollDir == SCROLL_VERT)
-		maxScrollPos = wndDim.bottom + wndDim.top;
-	else maxScrollPos = wndDim.right + wndDim.left;
+		maxScrollPos -= wndDim.bottom + wndDim.top;
+	else maxScrollPos -= wndDim.right + wndDim.left;
 
 	return S_SUCCESS;
 }
@@ -69,7 +69,7 @@ Status DragScrollerComponent::onLBAddChild(const IEventArgs& evtArgs)
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 
 	output(_T("[%d, %d]\n"), maxScrollPos, (long)LOWORD(args.wParam));
-	maxScrollPos = (long)LOWORD(args.wParam);
+	maxScrollPos += (long)LOWORD(args.wParam);
 	return S_SUCCESS;
 }
 

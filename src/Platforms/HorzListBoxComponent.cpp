@@ -37,10 +37,11 @@ Status HorzListBoxComponent::appendChild(HWND child)
 	BOOL res2 = GetClientRect(child, &dim);
 	childX += hMargin + (dim.right - dim.left);
 
-	long maxDragValue = childX - (horzContainerDim.right - horzContainerDim.left);
+	//long maxDragValue = childX - (horzContainerDim.right - horzContainerDim.left);
+	long widthIncrease = hMargin + (dim.right - dim.left);
 	children.push_back(child);
 
-	const WinEventArgs args = { NULL, listBox, MAKEWPARAM(maxDragValue, 0), (LPARAM)child };
+	const WinEventArgs args = { NULL, listBox, MAKEWPARAM(widthIncrease, 0), (LPARAM)child };
 	IApp::eventHandler(DispatchWindowComponent::translateMessage(listBox, WM_CUSTOM_LB_ADD_CHILD), args);
 
 	return S_SUCCESS;
@@ -74,10 +75,11 @@ Status HorzListBoxComponent::insertChild(HWND child, unsigned int insertionIndex
 		childX += hMargin + (cDim.right - cDim.left);
 	}
 
-	long maxDragValue = childX - (horzContainerDim.right - horzContainerDim.left);
+	//long maxDragValue = childX - (horzContainerDim.right - horzContainerDim.left);
+	long widthIncrease = hMargin + (dim.right - dim.left);
 	children.insert(children.begin() + insertionIndex, child);
 
-	const WinEventArgs args = { NULL, listBox, MAKEWPARAM(maxDragValue, 0), (LPARAM)child };
+	const WinEventArgs args = { NULL, listBox, MAKEWPARAM(widthIncrease, 0), (LPARAM)child };
 	IApp::eventHandler(DispatchWindowComponent::translateMessage(listBox, WM_CUSTOM_LB_ADD_CHILD), args);
 
 	return S_SUCCESS;
