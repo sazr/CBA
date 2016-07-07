@@ -87,6 +87,18 @@
     <ClCompile Include="..\..\src\Platforms\ScheduleAppComponent.cpp">
       <Filter>Platforms</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Platforms\AutoUpdateComponent.cpp">
+      <Filter>Platforms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Platforms\DownloadComponent.cpp">
+      <Filter>Platforms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Platforms\TooltipComponent.cpp">
+      <Filter>Platforms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Platforms\ImageBtnComponent.cpp">
+      <Filter>Platforms</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\CBA.h">
@@ -150,6 +162,18 @@
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Platforms\ScheduleAppComponent.h">
+      <Filter>Platforms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platforms\AutoUpdateComponent.h">
+      <Filter>Platforms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platforms\DownloadComponent.h">
+      <Filter>Platforms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platforms\TooltipComponent.h">
+      <Filter>Platforms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platforms\ImageBtnComponent.h">
       <Filter>Platforms</Filter>
     </ClInclude>
   </ItemGroup>

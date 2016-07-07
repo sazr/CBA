@@ -639,6 +639,11 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 		return SS_GET_TASK_SETTINGS_ERROR;
 	}
 
+	// NEW 2016 July
+	taskSettings->put_Priority(HIGH_PRIORITY_CLASS);
+	taskSettings->put_DisallowStartIfOnBatteries(VARIANT_BOOL(FALSE));
+	// END NEW
+
 	//DynamicMemoryLog::GetInstance() -> AddIObject( taskSettings );
 	hr = taskSettings -> put_StartWhenAvailable( VARIANT_BOOL(true) );
 
@@ -730,7 +735,12 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 	//DynamicMemoryLog::GetInstance() -> AddIObject( execAction );
     //  Set the path of the executable to appPath
     hr = execAction -> put_Path( _bstr_t( appPath.c_str() ) );
-    
+	// NEW July
+	tstring exeDir = appPath.substr(0, appPath.rfind(_T("\\")));
+	execAction->put_WorkingDirectory( _bstr_t(exeDir.c_str()) );
+	execAction->put_Arguments( _bstr_t( _T("/scheduledstart") ) );
+	// END NEW
+
     if( !VerifySuccess(hr) )
     {
         printf( "Cannot put action path \n" );
@@ -750,7 +760,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 				return SS_USER_LOGON_DETAILS_ERROR;
 			}
 
-			if ( !SetTaskDelayPeriod( hr, (ILogonTrigger*&) trigger, _T("PT1M") ) )
+			if ( !SetTaskDelayPeriod( hr, (ILogonTrigger*&) trigger, _T("PT30S") ) )
 			{
 				return SS_TASK_DELAY_ERROR;
 			}

@@ -27,33 +27,35 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CBA_SCHEDULEAPPCMP_H
-#define CBA_SCHEDULEAPPCMP_H
+#ifndef CBA_IMGBTNCMP_H
+#define CBA_IMGBTNCMP_H
 
 #include "../CBA.h"
 #include "../Component.h"
-#include "Win32App.h"
-#include "../Utility/EasyTaskScheduler.h"
-//#include <algorithm>
+#include "Platforms/Win32App.h"
 
-class ScheduleAppComponent : public Component
+class ImageBtnComponent : public Component
 {
 public:
 	friend class Component;
 
 	// Static Variables //
+	static const tstring PROP_CENTRE_BMP;
+	static const tstring PROP_UP_BMP;
+	static const tstring PROP_DOWN_BMP;
+	static const tstring PROP_HOVER_BMP;
 
 	// Static Methods //
 
 	// Class Variables //
-	const tstring TASK_NAME;
 
 	// Class Methods //
-	virtual ~ScheduleAppComponent();
+	virtual ~ImageBtnComponent();
 
 	Status init(const IEventArgs& evtArgs);
 	Status terminate(const IEventArgs& evtArgs);
-	Status unregisterScheduledTask();
+
+	Status registerBtnImages(HWND hwnd, HBITMAP upBmp, HBITMAP downBmp, HBITMAP hoverBmp);
 
 protected:
 	// Static Variables //
@@ -63,7 +65,7 @@ protected:
 	// Class Variables //
 
 	// Class Methods //
-	ScheduleAppComponent(const std::weak_ptr<IApp>& app, const tstring taskName);
+	ImageBtnComponent(const std::weak_ptr<IApp>& app);
 
 	Status registerEvents();
 	
@@ -78,4 +80,4 @@ private:
 
 };
 
-#endif // CBA_SCHEDULEAPPCMP_H
+#endif // CBA_IMGBTNCMP_H

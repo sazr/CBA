@@ -27,33 +27,51 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CBA_SCHEDULEAPPCMP_H
-#define CBA_SCHEDULEAPPCMP_H
+#ifndef CBA_DOWNLOADCMP_H
+#define CBA_DOWNLOADCMP_H
 
 #include "../CBA.h"
 #include "../Component.h"
 #include "Win32App.h"
-#include "../Utility/EasyTaskScheduler.h"
-//#include <algorithm>
+#include <fstream>
+#include <algorithm>
+#include <WinINet.h>
+#pragma comment(lib, "Wininet")
 
-class ScheduleAppComponent : public Component
+struct DownloadEvtArgs : public IEventArgs
+{
+	DownloadEvtArgs() = delete;
+	DownloadEvtArgs(unsigned long curProgress, unsigned long totalFileSize, const std::string& data)
+		: curProgress(curProgress), totalFileSize(totalFileSize), data(data)
+	{}
+	unsigned long curProgress;
+	unsigned long totalFileSize;
+	/*const*/ std::string data;
+};
+
+class DownloadComponent : public Component
 {
 public:
 	friend class Component;
 
 	// Static Variables //
+	static Status WM_DOWNLOAD_UPDATE;
+	static Status WM_DOWNLOAD_COMPLETE;
 
 	// Static Methods //
 
+
 	// Class Variables //
-	const tstring TASK_NAME;
+
 
 	// Class Methods //
-	virtual ~ScheduleAppComponent();
+	virtual ~DownloadComponent();
 
 	Status init(const IEventArgs& evtArgs);
 	Status terminate(const IEventArgs& evtArgs);
-	Status unregisterScheduledTask();
+
+	Status downloadFile(const std::string& url, const std::string& outputFilePath, STATE uid, bool reload = false);
+	Status download(const std::string& url, STATE uid);
 
 protected:
 	// Static Variables //
@@ -63,10 +81,14 @@ protected:
 	// Class Variables //
 
 	// Class Methods //
-	ScheduleAppComponent(const std::weak_ptr<IApp>& app, const tstring taskName);
+	DownloadComponent(const std::weak_ptr<IApp>& app);
 
 	Status registerEvents();
-	
+	static bool isHTTPProtocol(const std::string& url);
+	static bool checkHTTPVersion(HINTERNET hIurl);
+	static bool getFileName(const std::string& absFilePath, std::string& fName);
+	unsigned long openfile(const std::string& url, const std::string& outputFilePath, bool reload, std::ofstream& fout);
+
 private:
 	// Static Variables //
 
@@ -78,4 +100,4 @@ private:
 
 };
 
-#endif // CBA_SCHEDULEAPPCMP_H
+#endif // CBA_DOWNLOADCMP_H

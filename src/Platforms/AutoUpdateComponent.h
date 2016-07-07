@@ -27,33 +27,35 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CBA_SCHEDULEAPPCMP_H
-#define CBA_SCHEDULEAPPCMP_H
+#ifndef CBA_AUTOUPDATECMP_H
+#define CBA_AUTOUPDATECMP_H
 
 #include "../CBA.h"
 #include "../Component.h"
 #include "Win32App.h"
-#include "../Utility/EasyTaskScheduler.h"
-//#include <algorithm>
+#include "Platforms/Win32App.h"
+#include "DownloadComponent.h"
 
-class ScheduleAppComponent : public Component
+class AutoUpdateComponent : public Component
 {
 public:
 	friend class Component;
 
 	// Static Variables //
+	static Status S_VERSION_UP_TO_DATE;
 
 	// Static Methods //
 
+
 	// Class Variables //
-	const tstring TASK_NAME;
+
 
 	// Class Methods //
-	virtual ~ScheduleAppComponent();
+	virtual ~AutoUpdateComponent();
 
+	Status preInit(const IEventArgs& evtArgs);
 	Status init(const IEventArgs& evtArgs);
 	Status terminate(const IEventArgs& evtArgs);
-	Status unregisterScheduledTask();
 
 protected:
 	// Static Variables //
@@ -61,21 +63,31 @@ protected:
 	// Static Methods //
 
 	// Class Variables //
+	STATE getVersionId;
+	STATE getExeId;
+	const std::string versionCheckUrl;
+	const std::string dwnldFileUrl;
+	const std::string absOutputFilePath;
+	const std::string INIFilePath;
+	std::string newVersionStr;
+	std::shared_ptr<DownloadComponent> dldCmp;
 
 	// Class Methods //
-	ScheduleAppComponent(const std::weak_ptr<IApp>& app, const tstring taskName);
+	AutoUpdateComponent(const std::weak_ptr<IApp>& app, const std::string& versionCheckUrl, const std::string& dwnldFileUrl, const std::string& absOutputFilePath, const std::string& INIFilePath);
 
 	Status registerEvents();
-	
+	Status onDownloadFileComplete(const IEventArgs& evtArgs);
+	Status onDownloadComplete(const IEventArgs& evtArgs);
+
 private:
 	// Static Variables //
 
 	// Static Methods //
 
 	// Class Variables //
-
+	
 	// Class Methods //
 
 };
 
-#endif // CBA_SCHEDULEAPPCMP_H
+#endif // CBA_AUTOUPDATECMP_H

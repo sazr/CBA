@@ -27,16 +27,15 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CBA_SCHEDULEAPPCMP_H
-#define CBA_SCHEDULEAPPCMP_H
+#ifndef CBA_TOOLTIPCMP_H
+#define CBA_TOOLTIPCMP_H
 
 #include "../CBA.h"
 #include "../Component.h"
 #include "Win32App.h"
-#include "../Utility/EasyTaskScheduler.h"
-//#include <algorithm>
+#include <Commctrl.h>
 
-class ScheduleAppComponent : public Component
+class TooltipComponent : public Component
 {
 public:
 	friend class Component;
@@ -46,15 +45,14 @@ public:
 	// Static Methods //
 
 	// Class Variables //
-	const tstring TASK_NAME;
 
 	// Class Methods //
-	virtual ~ScheduleAppComponent();
+	virtual ~TooltipComponent();
 
 	Status init(const IEventArgs& evtArgs);
 	Status terminate(const IEventArgs& evtArgs);
-	Status unregisterScheduledTask();
 
+	Status addTooltip(HWND target, const tstring& tooltip);
 protected:
 	// Static Variables //
 
@@ -63,7 +61,7 @@ protected:
 	// Class Variables //
 
 	// Class Methods //
-	ScheduleAppComponent(const std::weak_ptr<IApp>& app, const tstring taskName);
+	TooltipComponent(const std::weak_ptr<IApp>& app);
 
 	Status registerEvents();
 	
@@ -78,4 +76,4 @@ private:
 
 };
 
-#endif // CBA_SCHEDULEAPPCMP_H
+#endif // CBA_TOOLTIPCMP_H

@@ -11,7 +11,7 @@ met:
 1. Redistributions of source code must retain the above copyright
 notice, this list of conditions and the following disclaimer.
 
-2. The source code, API or snippets cannot be used for commercial 
+2. The source code, API or snippets cannot be used for commercial
 purposes without written consent from the author.
 
 THIS SOFTWARE IS PROVIDED ``AS IS''
@@ -27,25 +27,66 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "DragScrollHandler.h"
+#include "TooltipComponent.h"
 
 // Class Property Implementation //
 
+
 // Static Function Implementation //
 
+
 // Function Implementation //
-Status DragScrollHandler::onScroll(const WinEventArgs& evtArgs)
+TooltipComponent::TooltipComponent(const std::weak_ptr<IApp>& app) : Component(app)
 {
+	registerEvents();
+}
+
+TooltipComponent::~TooltipComponent()
+{
+
+}
+
+Status TooltipComponent::init(const IEventArgs& evtArgs)
+{
+	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
+	
 	return S_SUCCESS;
 }
 
-Status DragScrollHandler::onMouseDown(const WinEventArgs& evtArgs)
+Status TooltipComponent::terminate(const IEventArgs& evtArgs)
 {
+	
 	return S_SUCCESS;
 }
 
-Status DragScrollHandler::onMouseUp(const WinEventArgs& evtArgs)
+Status TooltipComponent::registerEvents()
 {
+	//registerEvent(WM_CREATE, &TooltipComponent::init);
+	//registerEvent(WM_CLOSE, &TooltipComponent::terminate);
 	return S_SUCCESS;
 }
+
+Status TooltipComponent::addTooltip(HWND target, const tstring& tooltip)
+{
+	#pragma message("Get target wnd class name, if static return error")
+
+	HWND hwndTip = CreateWindowEx(NULL, TOOLTIPS_CLASS, NULL,
+		WS_POPUP | TTS_ALWAYSTIP | TTS_USEVISUALSTYLE /* | TTS_BALLOON*/,
+		CW_USEDEFAULT, CW_USEDEFAULT,
+		CW_USEDEFAULT, CW_USEDEFAULT,
+		GetParent(target), NULL,
+		GetModuleHandle(NULL), NULL);
+
+	TOOLINFO toolInfo = { 0 };
+	toolInfo.cbSize = TTTOOLINFO_V1_SIZE;
+	toolInfo.hwnd = GetParent(target);
+	toolInfo.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
+	toolInfo.uId = (UINT_PTR)target;
+	toolInfo.lpszText = (LPTSTR)tooltip.c_str();
+
+	SendMessage(hwndTip, TTM_ADDTOOL, 0, (LPARAM)&toolInfo);
+	SendMessage(hwndTip, TTM_ACTIVATE, TRUE, 0);
+	return S_SUCCESS;
+}
+
 

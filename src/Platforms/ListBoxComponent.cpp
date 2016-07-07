@@ -1,7 +1,37 @@
+/*
+Copyright (c) 2016 Sam Zielke-Ryner All rights reserved.
+
+For job opportunities or to work together on projects please contact
+myself via Github:   https://github.com/sazr
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+2. The source code, API or snippets cannot be used for commercial
+purposes without written consent from the author.
+
+THIS SOFTWARE IS PROVIDED ``AS IS''
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 #include "ListBoxComponent.h"
 
 // Class Property Implementation //
 Status ListBoxComponent::WM_CUSTOM_LB_ADD_CHILD = Status::registerState(_T("Custom CBA message: add child to CBA::ListBox"));
+Status ListBoxComponent::WM_CUSTOM_LB_REMOVE_CHILD = Status::registerState(_T("Custom CBA message: remove child to CBA::ListBox"));
 
 // Static Function Implementation //
 
@@ -72,7 +102,7 @@ Status ListBoxComponent::onChildMouseMove(const IEventArgs& evtArgs)
 	POINT p = { LOWORD(args.lParam), HIWORD(args.lParam) };
 	int res = MapWindowPoints(args.hwnd, listBox, (LPPOINT)&p, 1);
 
-	const WinEventArgs& translatedArgs{ NULL, listBox, args.wParam, MAKELPARAM(p.x, p.y) };
+	const WinEventArgs& translatedArgs{ NULL, listBox, args.wParam, MAKELPARAM(p.x, p.y), (void*)args.hwnd };
 	return IApp::eventHandler(DispatchWindowComponent::translateMessage(listBox, WM_MOUSEMOVE), translatedArgs);
 }
 
@@ -85,7 +115,7 @@ Status ListBoxComponent::onChildLButtonDown(const IEventArgs& evtArgs)
 	POINT p = { LOWORD(args.lParam), HIWORD(args.lParam) };
 	int res = MapWindowPoints(args.hwnd, listBox, (LPPOINT)&p, 1);
 
-	const WinEventArgs& translatedArgs{ NULL, listBox, args.wParam, MAKELPARAM(p.x, p.y) };
+	const WinEventArgs& translatedArgs{ NULL, listBox, args.wParam, MAKELPARAM(p.x, p.y), (void*)args.hwnd };
 	return IApp::eventHandler(DispatchWindowComponent::translateMessage(listBox, WM_LBUTTONDOWN), translatedArgs);
 }
 
@@ -110,7 +140,7 @@ Status ListBoxComponent::onChildLButtonUp(const IEventArgs& evtArgs)
 	POINT p = { LOWORD(args.lParam), HIWORD(args.lParam) };
 	int res = MapWindowPoints(args.hwnd, listBox, (LPPOINT)&p, 1);
 
-	const WinEventArgs& translatedArgs{ NULL, listBox, args.wParam, MAKELPARAM(p.x, p.y) };
+	const WinEventArgs& translatedArgs{ NULL, listBox, args.wParam, MAKELPARAM(p.x, p.y), (void*)args.hwnd };
 	return IApp::eventHandler(DispatchWindowComponent::translateMessage(listBox, WM_LBUTTONUP), translatedArgs);
 
 	return S_SUCCESS;
