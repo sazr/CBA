@@ -71,9 +71,15 @@ struct WinEventArgs : public IEventArgs
 
 static std::string WStringToString(const std::wstring& s)
 {
-	std::string temp(s.length(), ' ');
+	/*std::string temp(s.length(), ' ');
 	std::copy(s.begin(), s.end(), temp.begin());
-	return temp;
+	return temp;*/
+
+	std::string result;
+	for (char x : s)
+		result += x;
+
+	return result;
 }
 
 #pragma message("TODO: How to force all inheriters of IApp to only instantiate by static IApp::create() method")
