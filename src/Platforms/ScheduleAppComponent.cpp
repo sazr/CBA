@@ -39,6 +39,11 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ScheduleAppComponent::ScheduleAppComponent(const std::weak_ptr<IApp>& app, const tstring taskName) 
 	: Component(app), TASK_NAME(taskName)
 {
+	TCHAR username[MAX_PATH];
+	DWORD username_len = MAX_PATH;
+	GetUserName(username, &username_len);
+
+	TASK_NAME += username;
 	registerEvents();
 }
 

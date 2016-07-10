@@ -2,7 +2,7 @@
 
 /// Function Implementation ///
 
-std::wstring EasyTaskScheduler::s2ws( const std::string& s )
+/*std::wstring EasyTaskScheduler::s2ws( const std::string& s )
 {
     int len;
 	int slength = (int)s.length() + 1;
@@ -29,7 +29,7 @@ std::string EasyTaskScheduler::WStringToString(const std::wstring& s)
 	std::string temp(s.length(), ' ');
 	std::copy(s.begin(), s.end(), temp.begin());
 	return temp; 
-}
+}*/
 
 
 std::map <tstring, tstring> EasyTaskScheduler::GetEnvironmentVariablesEx()
@@ -213,9 +213,10 @@ bool EasyTaskScheduler::SetTaskEnabled( HRESULT& hr, ITrigger* trigger, bool ena
 }
 
 
-bool EasyTaskScheduler::SetTaskLogonName( HRESULT& hr, ILogonTrigger*& pLogonTrigger, TCHAR* userID )
+bool EasyTaskScheduler::SetTaskLogonName( HRESULT& hr, ILogonTrigger*& pLogonTrigger, const TCHAR userId[])
 {
-	hr = pLogonTrigger->put_UserId( _bstr_t( userID ) );  
+	
+	hr = pLogonTrigger->put_UserId(_bstr_t(userId));
     
     if ( !VerifySuccess(hr) )
     {
@@ -460,11 +461,13 @@ bool EasyTaskScheduler::PromptUserApproval()
 }
 
 
-void EasyTaskScheduler::DefineTaskSpecificVars( TASK_TRIGGER_TYPE2 triggerType, ITrigger*& trigger, IID& triggerClass, TASK_LOGON_TYPE& logonType, TCHAR*& userID )
+void EasyTaskScheduler::DefineTaskSpecificVars( TASK_TRIGGER_TYPE2 triggerType, ITrigger*& trigger, IID& triggerClass, TASK_LOGON_TYPE& logonType, TCHAR userID[] )
 {
 	// Post:
 
-	size_t len;
+	DWORD username_len = MAX_PATH;
+	GetUserName(userID, &username_len);
+	output(_T("USER: %s\n"), userID);
 
 	switch ( triggerType )
 	{
@@ -473,8 +476,8 @@ void EasyTaskScheduler::DefineTaskSpecificVars( TASK_TRIGGER_TYPE2 triggerType, 
 			trigger      = dynamic_cast<ILogonTrigger*>(trigger);
 			triggerClass = IID_ILogonTrigger;                    //userID = _bstr_t( _wgetenv(_T("USERNAME")) );
 			logonType    = TASK_LOGON_INTERACTIVE_TOKEN;
-			_tdupenv_s( &userID, &len, _T("USERNAME") );
-			printf( "TEST: %S\n", userID );
+			/*_tdupenv_s( &userID, &len, _T("USERNAME") );
+			printf( "TEST: %S\n", userID );*/
 		}
 		break;
 		case TASK_TRIGGER_TIME:
@@ -482,7 +485,7 @@ void EasyTaskScheduler::DefineTaskSpecificVars( TASK_TRIGGER_TYPE2 triggerType, 
 			trigger      = dynamic_cast<ITimeTrigger*>(trigger); // (ITimeTrigger*)trigger;
 			triggerClass = IID_ITimeTrigger;                     // userID       = _bstr_t( _wdupenv_s(_T("USERNAME")) ); 
 			logonType    = TASK_LOGON_INTERACTIVE_TOKEN;
-			_tdupenv_s( &userID, &len, _T("USERNAME") );
+			/*_tdupenv_s( &userID, &len, _T("USERNAME") );*/
 		}
 		break;
 		case TASK_TRIGGER_BOOT:
@@ -490,7 +493,7 @@ void EasyTaskScheduler::DefineTaskSpecificVars( TASK_TRIGGER_TYPE2 triggerType, 
 			trigger      = dynamic_cast<IBootTrigger*>(trigger); // (IBootTrigger*)trigger;
 			triggerClass = IID_IBootTrigger;                     // userID       = _T("Local Service");
 			logonType    = TASK_LOGON_SERVICE_ACCOUNT;
-			_tdupenv_s( &userID, &len, _T("Local Service") );
+			/*_tdupenv_s( &userID, &len, _T("Local Service") );*/
 		}
 		break;
 		case TASK_TRIGGER_DAILY:
@@ -498,7 +501,7 @@ void EasyTaskScheduler::DefineTaskSpecificVars( TASK_TRIGGER_TYPE2 triggerType, 
 			trigger      = dynamic_cast<IDailyTrigger*>(trigger);
 			triggerClass = IID_IDailyTrigger;                     // userID       = _bstr_t( _wdupenv_s(_T("USERNAME")) );
 			logonType    = TASK_LOGON_INTERACTIVE_TOKEN;          // _variant_t(_bstr_t(pszName)), _variant_t(_bstr_t(pszPwd)), TASK_LOGON_PASSWORD
-			_tdupenv_s( &userID, &len, _T("USERNAME") );
+			/*_tdupenv_s( &userID, &len, _T("USERNAME") );*/
 		}
 		break;
 		case TASK_TRIGGER_WEEKLY:
@@ -506,7 +509,7 @@ void EasyTaskScheduler::DefineTaskSpecificVars( TASK_TRIGGER_TYPE2 triggerType, 
 			trigger      = dynamic_cast<IWeeklyTrigger*>(trigger);
 			triggerClass = IID_IWeeklyTrigger;                     // userID       = _bstr_t( _wdupenv_s(_T("USERNAME")) ); 
 			logonType    = TASK_LOGON_INTERACTIVE_TOKEN;
-			_tdupenv_s( &userID, &len, _T("USERNAME") );
+			/*_tdupenv_s( &userID, &len, _T("USERNAME") );*/
 		}
 		break;
 		case TASK_TRIGGER_MONTHLY:
@@ -514,7 +517,7 @@ void EasyTaskScheduler::DefineTaskSpecificVars( TASK_TRIGGER_TYPE2 triggerType, 
 			trigger      = dynamic_cast<IMonthlyDOWTrigger*>(trigger);
 			triggerClass = IID_IMonthlyTrigger;                    // userID       = _bstr_t( _wdupenv_s(_T("USERNAME")) ); 
 			logonType    = TASK_LOGON_INTERACTIVE_TOKEN;
-			_tdupenv_s( &userID, &len, _T("USERNAME") );
+			/*_tdupenv_s( &userID, &len, _T("USERNAME") );*/
 		}
 		break;
 		default:
@@ -523,17 +526,10 @@ void EasyTaskScheduler::DefineTaskSpecificVars( TASK_TRIGGER_TYPE2 triggerType, 
 			trigger      = dynamic_cast<IDailyTrigger*>(trigger);
 			triggerClass = IID_IDailyTrigger;                     // userID       = _bstr_t( _wdupenv_s(_T("USERNAME")) );
 			logonType    = TASK_LOGON_INTERACTIVE_TOKEN;          // _variant_t(_bstr_t(pszName)), _variant_t(_bstr_t(pszPwd)), TASK_LOGON_PASSWORD
-			_tdupenv_s( &userID, &len, _T("USERNAME") );
+			/*_tdupenv_s( &userID, &len, _T("USERNAME") );*/
 		}
 		break;
 	}
-
-	if ( userID == NULL )
-	{
-		printf( "Unable to retrieve current windows user name: causes could be old version of windows" );
-		userID = _T("Could not determine username");
-	}
-
 }
 
 
@@ -555,35 +551,36 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 	ITrigger           *trigger        = NULL;
 	HRESULT            hr              = NULL;
 	IID                triggerClass    = IID_IUnknown;
-	TCHAR*             userID          = _T("");
+	TCHAR             userID[MAX_PATH] = _T("");
 	TASK_LOGON_TYPE    logonType       = TASK_LOGON_INTERACTIVE_TOKEN;
 	VARIANT            varPassword;
 	varPassword.vt                     = VT_EMPTY;
 
-	DefineTaskSpecificVars( triggerType, trigger, triggerClass, logonType, userID );
+
+	DefineTaskSpecificVars( triggerType, trigger, triggerClass, logonType, userID);
 
 	// Return if appPath doesn't lead to an actual application
 	if ( !FileExists( appPath ) )
 	{
-		printf( "appPath parameter Error: appPath does not lead to an actual executable \n" );
+		outputStr( "appPath parameter Error: appPath does not lead to an actual executable \n" );
 		return SS_EXE_PATH_ERROR;
 	}
 
 	// DEBUGGING
-	printf( "TEST1: %S\n", userID );
+	output( _T("TEST1: %s\n"), userID );
 
 	if ( !ValidateTimeStamp( timeStamp ) )
 	{
-		printf( "timeStamp parameter Error: timeStamp has invalid format \n" );
+		outputStr( "timeStamp parameter Error: timeStamp has invalid format \n" );
 		return SS_TIMESTAMP_FORMAT_ERROR;
 	}
 
 	// DEBUGGING
-	printf( "TEST2: %S\n", userID );
+	output( _T("TEST2: %s\n"), userID );
 
 	if ( !InitialiseCOMSecurity( hr, taskService ) )
 	{
-		printf( "Function InitialiseCOMSecurity() Failed \n" );
+		outputStr( "Function InitialiseCOMSecurity() Failed \n" );
 		//DynamicMemoryLog::GetInstance() -> ReleaseDynamicMemory(); 
 		return SS_COM_SECURITY_ERROR;
 	}
@@ -594,12 +591,12 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 
 	if ( !VerifySuccess(hr) )
 	{
-		printf( "Failed to get root folder \n" );
+		outputStr( "Failed to get root folder \n" );
 		return SS_ROOT_FOLDER_ERROR;
 	}
 
 	// DEBUGGING
-	printf( "TEST3: %S\n", userID );
+	output(_T("TEST3: %s\n"), userID);
 
 	//DynamicMemoryLog::GetInstance() -> AddIObject( rootFolder );
 	// Delete previous task (of same name) if it exists
@@ -609,7 +606,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 
 	if ( !VerifySuccess(hr) )
 	{
-		printf( "Failed to CoCreate an instance of the TaskService class \n" );
+		outputStr( "Failed to CoCreate an instance of the TaskService class \n" );
 		return SS_NEW_TASK_ERROR;
 	}
 
@@ -618,7 +615,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 
 	if ( !VerifySuccess(hr) )
 	{
-		printf( "Failed to RegInfo identification pointer \n" );
+		outputStr( "Failed to RegInfo identification pointer \n" );
 		return SS_REGINFO_ERROR;
 	}
 
@@ -627,7 +624,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 
 	if ( !VerifySuccess(hr) )
 	{
-		printf( "Cannot put identification info \n" );
+		outputStr( "Cannot put identification info \n" );
 		return SS_SET_TASK_AUTHOR_ERROR;
 	}
 
@@ -635,7 +632,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 
 	if ( !VerifySuccess(hr) )
 	{
-		printf( "Cannot get settings pointer \n" );
+		outputStr( "Cannot get settings pointer \n" );
 		return SS_GET_TASK_SETTINGS_ERROR;
 	}
 
@@ -649,7 +646,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 
 	if ( !VerifySuccess(hr) )
 	{
-		printf( "Cannot put setting information \n" );
+		outputStr( "Cannot put setting information \n" );
 		return SS_TASK_START_ERROR;
 	}
     
@@ -657,7 +654,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 
 	if( !VerifySuccess(hr) )
     {
-        printf( "Cannot get trigger collection \n" );
+        outputStr( "Cannot get trigger collection \n" );
 		return SS_GET_TRIGGERS_ERROR;
     }
 
@@ -667,7 +664,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 
     if( !VerifySuccess(hr) )
     {
-        printf( "Cannot create trigger \n" );
+        outputStr( "Cannot create trigger \n" );
 	    return SS_CREATE_TRIGGER_ERROR;
     }
 
@@ -676,7 +673,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 
     if( !VerifySuccess(hr) )
     {
-        printf( "QueryInterface call failed for ITimeTrigger \n" );
+        outputStr( "QueryInterface call failed for ITimeTrigger \n" );
 		return SS_TRIGGER_PTR_ERROR;
     }
 
@@ -684,12 +681,12 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
     hr = trigger -> put_Id( _bstr_t( _T("Trigger1") ) );     // TODO: add parameter to set trigger id
     
 	if( FAILED(hr) )
-        printf( "Cannot put trigger ID \n" );
+        outputStr( "Cannot put trigger ID \n" );
 
     hr = trigger -> put_EndBoundary( _bstr_t(_T("2050-05-02T08:00:00")) );
     
 	if( FAILED(hr) )
-       printf( "Cannot put end boundary on trigger \n" );
+       outputStr( "Cannot put end boundary on trigger \n" );
 
     //  Set the task to start at a certain time. The time 
     //  format should be YYYY-MM-DDTHH:MM:SS(+-)(timezone).
@@ -699,7 +696,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
     
 	if( !VerifySuccess(hr) )
     {
-        printf( "Cannot add start boundary to trigger \n" );
+        outputStr( "Cannot add start boundary to trigger \n" );
 		return SS_SET_TASK_START_ERROR;
     }
     
@@ -708,7 +705,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 
     if( !VerifySuccess(hr) )
     {
-        printf( "Cannot get Task collection pointer \n" );
+        outputStr( "Cannot get Task collection pointer \n" );
 		return SS_GET_ACTION_COLLECTION_ERROR;
     }
     
@@ -718,7 +715,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 
     if( !VerifySuccess(hr) )
     {
-        printf( "Cannot create the action \n" );
+        outputStr( "Cannot create the action \n" );
         return SS_SET_TASK_ACTION_ERROR;
     }
 
@@ -728,7 +725,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
     
 	if( !VerifySuccess(hr) )
     {
-        printf( "QueryInterface call failed for IExecAction: %x %X %u \n", hr, hr, hr );
+		output(_T("QueryInterface call failed for IExecAction: %x %X %u \n"), hr, hr, hr);
 		return SS_GET_EXECUTABLE_PTR_ERROR;
     }
 
@@ -743,7 +740,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 
     if( !VerifySuccess(hr) )
     {
-        printf( "Cannot put action path \n" );
+        outputStr( "Cannot put action path \n" );
 		return SS_SET_EXECUTABLE_PATH_ERROR;
     }  
 
@@ -753,7 +750,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 	{
 		case TASK_TRIGGER_LOGON:
 		{
-			bool setLogonUserSuccess = SetTaskLogonName( hr, (ILogonTrigger*&) trigger, userID );
+			bool setLogonUserSuccess = SetTaskLogonName(hr, (ILogonTrigger*&)trigger, userID);
 			
 			if ( !setLogonUserSuccess )
 			{
@@ -785,7 +782,7 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 		break;
 		case TASK_TRIGGER_BOOT:
 		{
-			if ( !SetTaskDelayPeriod( hr, (IBootTrigger*&) trigger, tstring(_T("PT1M")) ) )
+			if ( !SetTaskDelayPeriod( hr, (IBootTrigger*&) trigger, tstring(_T("PT30S")) ) )
 			{
 				return SS_TASK_DELAY_ERROR;
 			}
@@ -839,29 +836,47 @@ EasyTaskScheduler::ScheduleStatus EasyTaskScheduler::RegisterTask( tstring taskN
 		break;
 	}
 
-	
+	VARIANT varUser;
+	varUser.vt = VT_EMPTY;
+	VARIANT varSddl;
+	varSddl.vt = VT_EMPTY;
+
 	//  Save the task in the root folder
-    hr = rootFolder -> RegisterTaskDefinition( _bstr_t( taskName.c_str() ), taskDef, TASK_CREATE_OR_UPDATE, 
-                                               _variant_t(_bstr_t(userID)), varPassword, logonType, _variant_t(_T("")),
-											   &regTask);
+    //hr = rootFolder -> RegisterTaskDefinition( _bstr_t( taskName.c_str() ), 
+		//taskDef, TASK_CREATE_OR_UPDATE, 
+		//varUser, //_variant_t(_bstr_t(userID)), 
+		//varPassword, 
+		//TASK_LOGON_NONE, 
+		//varSddl, //_variant_t(_T("")),
+		//&regTask);
+
+	hr = rootFolder->RegisterTaskDefinition(
+		_bstr_t(taskName.c_str()),
+		taskDef,
+		TASK_CREATE_OR_UPDATE,
+		_variant_t(_bstr_t(userID)), //_variant_t(_T("Builtin\\Users")),
+		varPassword,
+		TASK_LOGON_NONE,
+		_variant_t(_T("")),
+		&regTask);
 
 	// Debugging
-	printf( "A: %S\n", taskName.c_str() );
-	printf( "B: %S\n", userID );
+	output(_T("A: %S\n"), taskName.c_str());
+	output(_T("B: %S\n"), userID);
 	TCHAR* a;
 	size_t len;
 	_tdupenv_s( &a, &len, _T("USERNAME") );
-	printf( "C: %S\n", a );
+	output(_T("C: %S\n"), a);
 	// end debugging
 
 	if ( !VerifySuccess(hr) )
     {
-        printf( "Error saving the Task. HR= %x \n", hr );
+        output( _T("Error saving the Task. HR= %x \n"), hr );
         return SS_REGISTER_TASK_ERROR;
     }
     
 	//DynamicMemoryLog::GetInstance() -> AddIObject( regTask );
-    printf( "Success! Task successfully registered \n" );
+    outputStr( "Success! Task successfully registered \n" );
 
     // Clean up.
 	//DynamicMemoryLog::GetInstance() -> ReleaseDynamicMemory();
@@ -936,7 +951,7 @@ bool EasyTaskScheduler::RemoveTask( tstring taskName )
 
 	if ( !InitialiseCOMSecurity( hr, taskService ) )
 	{
-		printf( "Function InitialiseCOMSecurity() Failed \n" );
+		outputStr( "Function InitialiseCOMSecurity() Failed \n" );
 		return false;
 	}
 
@@ -947,7 +962,7 @@ bool EasyTaskScheduler::RemoveTask( tstring taskName )
 
 	if ( FAILED(hr) )
 	{
-		printf( "Cannot get Root Folder pointer: %x \n", hr );
+		output(_T("Cannot get Root Folder pointer: %x \n"), hr);
 		CoUninitialize();
 		return false;
 	}
@@ -987,13 +1002,13 @@ bool EasyTaskScheduler::EditTask( tstring taskName )
 
 		if ( FAILED(hr) )
 		{
-			printf( "Failed to create instance \n" );
+			outputStr( "Failed to create instance \n" );
 			CoUninitialize();
 			return false;
 		}
 	}
 	else {
-		printf( "Failed to initialise HRESULT \n" );
+		outputStr( "Failed to initialise HRESULT \n" );
 		return false;
 	}
 
@@ -1002,7 +1017,7 @@ bool EasyTaskScheduler::EditTask( tstring taskName )
 
 	if ( FAILED(hr) )
 	{
-		printf( "Failed to get task %x \n", hr );
+		output(_T("Failed to get task %x \n"), hr);
 		CoUninitialize();
 		return false;
 	}
@@ -1012,7 +1027,7 @@ bool EasyTaskScheduler::EditTask( tstring taskName )
 
 	if ( FAILED(hr) )
 	{
-		printf( "Failed to edit task \n" );
+		outputStr( "Failed to edit task \n" );
 		CoUninitialize();
 		return false;
 	}
@@ -1040,7 +1055,7 @@ std::vector <tstring> EasyTaskScheduler::RetrieveScheduledTasks()
 
 	if ( !InitialiseCOMSecurity( hr, taskService ) )
 	{
-		printf( "Failed to initialise COM & COM security \n" );
+		outputStr( "Failed to initialise COM & COM security \n" );
 		return tasks;
 	}
 
@@ -1051,7 +1066,7 @@ std::vector <tstring> EasyTaskScheduler::RetrieveScheduledTasks()
 
 	if ( FAILED(hr) )
 	{
-		printf( "Cannot get Root Folder pointer: %x \n", hr );
+		output(_T("Cannot get Root Folder pointer: %x \n"), hr);
 		CoUninitialize();
 		return tasks;
 	}
@@ -1061,7 +1076,7 @@ std::vector <tstring> EasyTaskScheduler::RetrieveScheduledTasks()
 
 	if( FAILED(hr) )
     {
-        printf( "Cannot get the registered tasks.: %x \n", hr );
+		output(_T("Cannot get the registered tasks.: %x \n"), hr);
         CoUninitialize();
         return tasks;
     }
@@ -1070,7 +1085,7 @@ std::vector <tstring> EasyTaskScheduler::RetrieveScheduledTasks()
 
 	if ( taskNum == 0 )
     {
-        printf( "\nNo Tasks are currently running" );
+        outputStr( "\nNo Tasks are currently running" );
         taskCollection -> Release();
         CoUninitialize();
         return tasks;
@@ -1117,7 +1132,7 @@ std::vector <tstring> EasyTaskScheduler::RetrieveScheduledTasks()
 			SysFreeString( taskName );
 			tasks.push_back( taskStr );
         }
-        else printf("\nCannot get the registered task item at index=%d: %x", i+1, hr);
+		else output(_T("\nCannot get the registered task item at index=%d: %x"), i + 1, hr);
 
     }
 
@@ -1142,7 +1157,7 @@ std::vector <tstring> EasyTaskScheduler::RetrieveRunningTasks()
 
 	if ( !InitialiseCOMSecurity( hr, taskService ) )
 	{
-		printf( "Function InitialiseCOMSecurity() Failed \n" );
+		outputStr( "Function InitialiseCOMSecurity() Failed \n" );
 		return tasks;
 	}
 
@@ -1152,7 +1167,7 @@ std::vector <tstring> EasyTaskScheduler::RetrieveRunningTasks()
 
 	if( FAILED(hr) )
     {
-        printf( "Cannot get Root Folder pointer: %x \n", hr );
+		output(_T("Cannot get Root Folder pointer: %x \n"), hr);
         CoUninitialize();
         return tasks;
     }
@@ -1161,7 +1176,7 @@ std::vector <tstring> EasyTaskScheduler::RetrieveRunningTasks()
 
 	if( taskNum == 0 )
     {
-        printf( "\nNo Tasks are currently running" );
+        outputStr( "\nNo Tasks are currently running" );
         runningTasks -> Release();
         CoUninitialize();
         return tasks;
@@ -1203,7 +1218,7 @@ std::vector <tstring> EasyTaskScheduler::RetrieveRunningTasks()
 			SysFreeString( taskName );
             selTask->Release();
         }
-        else printf("\nCannot get the registered task item at index=%d: %x", i+1, hr);
+		else output(_T("\nCannot get the registered task item at index=%d: %x"), i + 1, hr);
 
     }
 

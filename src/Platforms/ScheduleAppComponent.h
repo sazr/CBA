@@ -46,8 +46,7 @@ public:
 	// Static Methods //
 
 	// Class Variables //
-	const tstring TASK_NAME;
-
+	
 	// Class Methods //
 	virtual ~ScheduleAppComponent();
 
@@ -73,6 +72,7 @@ private:
 	// Static Methods //
 
 	// Class Variables //
+	/*const*/ tstring TASK_NAME;
 
 	// Class Methods //
 

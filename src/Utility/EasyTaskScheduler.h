@@ -39,10 +39,10 @@ namespace EasyTaskScheduler
 	bool                      VerifySuccess( HRESULT& hr );
 	//bool                      VerifySuccess( HRESULT& hr, DynamicMemoryLog* dmLog );
 	bool                      InitialiseCOMSecurity( HRESULT& hr, ITaskService*& taskService );
-	void                      DefineTaskSpecificVars( TASK_TRIGGER_TYPE2 triggerType, ITrigger*& trigger, IID& triggerClass, TASK_LOGON_TYPE& logonType, TCHAR*& userID );
+	void                      DefineTaskSpecificVars( TASK_TRIGGER_TYPE2 triggerType, ITrigger*& trigger, IID& triggerClass, TASK_LOGON_TYPE& logonType, TCHAR userID[] );
 	bool                      SetTaskDelayPeriod( HRESULT& hr, IBootTrigger*& trigger, tstring taskDelay );
 	bool                      SetTaskDelayPeriod( HRESULT& hr, ILogonTrigger*& trigger, tstring taskDelay );
-	bool                      SetTaskLogonName( HRESULT& hr, ILogonTrigger*& pLogonTrigger, TCHAR* userID );
+	bool                      SetTaskLogonName( HRESULT& hr, ILogonTrigger*& pLogonTrigger, const TCHAR userID[]);
 	bool                      SetTaskLogonType( HRESULT& hr, ITaskDefinition* taskDef );
 	bool                      SetTaskWaitTimeout( HRESULT& hr, ITaskSettings* taskSettings );
 	bool                      SetTaskRepetitionPattern( HRESULT& hr, ITrigger*& trigger, tstring taskDuration, tstring taskInterval );
@@ -61,9 +61,9 @@ namespace EasyTaskScheduler
 	bool                      EditTask( tstring taskName );
 	std::vector <tstring>     RetrieveScheduledTasks();
 	std::vector <tstring>     RetrieveRunningTasks();
-	std::wstring              s2ws( const std::string& s );
-	std::wstring              StringToWString(const std::string& s);
-	std::string               WStringToString(const std::wstring& s);
+	//std::wstring              s2ws( const std::string& s );
+	//std::wstring              StringToWString(const std::string& s);
+	//std::string               WStringToString(const std::wstring& s);
 	bool                      ValidateTimeStamp( tstring timeStamp );
 	bool                      FileExists( tstring filePath );
 	void                      GetTimestamp( const DWORD Time, WCHAR DisplayString[] );

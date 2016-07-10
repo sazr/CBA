@@ -47,6 +47,13 @@ void output(const tstring format, ...)
 	TCHAR* buf = new TCHAR[len];
 	_vstprintf_s(buf, len, format.c_str(), args);
 	OutputDebugString(buf);
+
+	/*tofstream fout;
+	fout.open(_T("cba.log"), std::fstream::out | std::fstream::app);
+	fout.write(buf, len);
+	fout.write(_T("\n"), 1);
+	fout.close();*/
+
 	delete[] buf;
 	#else
 	TCHAR buf[10000];

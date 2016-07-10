@@ -30,6 +30,9 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef CBA_H
 #define CBA_H
 
+#ifndef OUTPUT_TO_FILE
+#define OUTPUT_TO_FILE	0
+#endif // OUTPUT_TO_FILE
 #define _CRT_NON_CONFORMING_SWPRINTFS
 
 // C RunTime Header Files
@@ -39,6 +42,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <memory.h>
 #include <string>
 #include <memory>
+#include <fstream>
 
 #ifdef _WIN32
 #include <SDKDDKVer.h>
@@ -61,10 +65,12 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef UNICODE
 typedef std::string tstring;
 typedef std::stringstream tstringstream;
+typedef std::ofstream tofstream;
 typedef char cba_char;
 #else
 typedef std::wstring tstring;
 typedef std::wstringstream tstringstream;
+typedef std::wofstream tofstream;
 typedef wchar_t cba_char;
 #endif
 
