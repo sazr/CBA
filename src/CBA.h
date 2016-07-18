@@ -76,6 +76,7 @@ typedef wchar_t cba_char;
 
 //#pragma message("Parameter cannot be reference because it causes undefined behaviour of variadic argument list (according to c++ standard) \nTODO: Wrap output() in namespace")
 void output(const tstring format, ...);
+tstring getLastErrorAsString();
 
 #define outputStr(x) output(_T( x ))
 #define outputArgs(x, ...) output(_T( x ), ...)

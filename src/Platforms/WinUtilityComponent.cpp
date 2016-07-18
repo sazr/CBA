@@ -85,6 +85,7 @@ Status WinUtilityComponent::onDisplayChange(const IEventArgs& evtArgs)
 	return S_SUCCESS;
 }
 
+#pragma message("TODO: make static method")
 Status WinUtilityComponent::getProcessFilePath(DWORD processId, tstring& filePath)
 {
 	HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
@@ -101,7 +102,7 @@ Status WinUtilityComponent::getProcessFilePath(DWORD processId, tstring& filePat
 	TCHAR exePath[MAX_PATH];
 
 	if (GetModuleFileNameEx(hProcess, NULL, exePath, MAX_PATH) == 0){
-		output(_T("Failed to get module file name\n"));
+		output(_T("Failed to get module file name: %s, %s\n"), getLastErrorAsString().c_str(), exePath);
 		return S_UNDEFINED_ERROR;
 	}
 
@@ -129,6 +130,28 @@ Status WinUtilityComponent::getINISectionNames(const tstring& absINIPath, std::v
 		//	break;
 	}
 
+	return S_SUCCESS;
+}
+
+Status WinUtilityComponent::getINISectionNames(const tstring& absINIPath, tstring& sectionNames)
+{
+	tstringstream ss;
+	TCHAR sectionNamesBuf[1024];
+
+	if (!GetPrivateProfileSectionNames(sectionNamesBuf, 1024, absINIPath.c_str()))
+		return S_UNDEFINED_ERROR;
+
+	for (TCHAR* p = sectionNamesBuf; *p; ++p)
+	{
+		tstring sectionName(p);
+		ss << sectionName << _T(",");
+		p += sectionName.size();
+
+		//if (*p == 0)
+		//	break;
+	}
+
+	ss >> sectionNames;
 	return S_SUCCESS;
 }
 

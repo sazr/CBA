@@ -128,7 +128,16 @@ Status DragScrollerComponent::onLBRemoveChild(const IEventArgs& evtArgs)
 {
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 
-	maxScrollPos -= (long)args.wParam;
+	long decrease = (long)args.wParam;
+	maxScrollPos -= decrease;
+	
+	if (clientScrollPos < maxScrollPos)
+		return S_SUCCESS;
+
+	if (scrollDir == SCROLL_VERT)
+		return dragScroll(args.hwnd, yPos - decrease, yPos, true);
+	else return dragScroll(args.hwnd, xPos - decrease, xPos, true);
+
 	return S_SUCCESS;
 }
 
@@ -163,12 +172,10 @@ Status DragScrollerComponent::onLButtonDown(const IEventArgs& evtArgs)
 
 Status DragScrollerComponent::onLButtonUp(const IEventArgs& evtArgs)
 {
-	output(_T("DragScrollerComponent::onLButtonUp\n"));
 	STATE res = S_SUCCESS.state;
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 
 	if (isDragging) {
-		output(_T("Killing propagation\n"));
 		killOnCommand = true;
 	}
 
@@ -182,23 +189,20 @@ Status DragScrollerComponent::onLButtonUp(const IEventArgs& evtArgs)
 
 Status DragScrollerComponent::onTimer(const IEventArgs& evtArgs)
 {
-	outputStr("On timer\n");
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 	
 	if (!isDragging) {
-		outputStr("Not dragging\n");
 		const WinEventArgs lButtonDownArgs{ NULL, lButtonDownHwnd, lButtonDownWParam, lButtonDownLParam };
 		Win32App::eventHandler(DispatchWindowComponent::translateMessage(lButtonDownArgs.hwnd, WM_LBUTTONDOWN), lButtonDownArgs);
 	}
-	else outputStr("Is dragging\n");
 
 	KillTimer(args.hwnd, LBUTTONDOWN_TIMER);
 	return S_SUCCESS;
 }
 
-Status DragScrollerComponent::dragScroll(HWND hwnd, long pos, long& prevScrollPos)
+Status DragScrollerComponent::dragScroll(HWND hwnd, long pos, long& prevScrollPos, bool alwaysScroll)
 {
-	if (GetKeyState(VK_LBUTTON) >= 0)
+	if (!alwaysScroll && GetKeyState(VK_LBUTTON) >= 0)
 		return S_UNDEFINED_ERROR;
 
 	if (dragDistance > DRAG_THRESHOLD)
@@ -208,8 +212,20 @@ Status DragScrollerComponent::dragScroll(HWND hwnd, long pos, long& prevScrollPo
 	dragDistance += abs(distToScroll);
 	distToScroll *= 0.9; // move 90% of the distance the user scrolled
 
-	if (clientScrollPos + distToScroll < 0 || clientScrollPos + distToScroll >= maxScrollPos)
+	/*output(_T("pos: %d, prevScrollPos: %d, distToScroll: %d, clientScrollPos: %d, maxScrollPos: %d\n"), 
+		pos, prevScrollPos, distToScroll, clientScrollPos, maxScrollPos);*/
+
+	if (clientScrollPos > maxScrollPos) {
+		distToScroll = maxScrollPos - clientScrollPos;
+
+		if (maxScrollPos <= 0)
+			distToScroll = -clientScrollPos;
+	}
+	else if (clientScrollPos + distToScroll < 0 || clientScrollPos + distToScroll >= maxScrollPos)
 		return S_UNDEFINED_ERROR;
+
+	/*output(_T("AFTER pos: %d, prevScrollPos: %d, distToScroll: %d, clientScrollPos: %d, maxScrollPos: %d\n"),
+		pos, prevScrollPos, distToScroll, clientScrollPos, maxScrollPos);*/
 
 	clientScrollPos += distToScroll;
 	distToScroll = -distToScroll;
@@ -223,3 +239,5 @@ Status DragScrollerComponent::dragScroll(HWND hwnd, long pos, long& prevScrollPo
 
 	return S_SUCCESS;
 }
+
+

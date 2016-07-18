@@ -27,68 +27,75 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CBA_DRAGSCROLLERCMP_H
-#define CBA_DRAGSCROLLERCMP_H
+#ifndef CBA_RUNAPPCMP_H
+#define CBA_RUNAPPCMP_H
 
 #include "../CBA.h"
 #include "../Component.h"
-#include "IScrollerComponent.h"
-#include "DispatchWindowComponent.h"
-#include "ListBoxComponent.h"
+#include "../Models/HwndInfo.h"
 #include "Win32App.h"
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi")
 
-class DragScrollerComponent : public IScrollerComponent
+//static bool icompare_pred(TCHAR a, TCHAR b)
+//{
+//	return _totlower(a) == _totlower(b);
+//}
+//
+//static bool icompare(tstring const& a, tstring const& b)
+//{
+//	if (a.length() == b.length()) {
+//		return std::equal(b.begin(), b.end(),
+//			a.begin(), icompare_pred);
+//	}
+//
+//	return false;
+//}
+
+class RunApplicationComponent : public Component
 {
 public:
 	friend class Component;
 
 	// Static Variables //
-	static const unsigned int LBUTTONDOWN_DELAY;
-	static const STATE LBUTTONDOWN_TIMER;
+	static Status RESIZE_APP;
+	static const unsigned int MAX_TRIES;
 
 	// Static Methods //
+	static BOOL CALLBACK enumWindows(HWND hwnd, LPARAM lParam);
 
 	// Class Variables //
+	std::vector<HWND> openWnds;
 	
 	// Class Methods //
-	virtual ~DragScrollerComponent();
+	virtual ~RunApplicationComponent();
 
 	Status init(const IEventArgs& evtArgs);
 	Status terminate(const IEventArgs& evtArgs);
-
-	Status enable() override;
-	Status disable() override;
+	//Status tryResizeHwnd(HWND hwnd);
+	Status runApplications(const std::vector<HwndInfo>& nHwndInfos, const std::vector<HWND>& nHwndIgnoreList);
+	bool isAltTabWindow(HWND hwnd);
 
 protected:
 	// Static Variables //
-	static const unsigned int DRAG_THRESHOLD = 100;
 
 	// Static Methods //
 
 	// Class Variables //
-	bool lButtonDown;
-	bool isDragging;
-	bool killOnCommand;
-	long xPos;
-	long yPos;
-	long dragDistance;
-	HWND lButtonDownHwnd;
-	WPARAM lButtonDownWParam;
-	LPARAM lButtonDownLParam;
+	unsigned int nTries;
+	RECT clientRect;
+	HWND mainHwnd;
+	std::vector<HwndInfo> hwndInfos;
+	std::vector<HWND> hwndIgnoreList;
 
 	// Class Methods //
-	DragScrollerComponent(const std::weak_ptr<IApp>& app, STATE hwndId, ScrollDirection scrollDir);
+	RunApplicationComponent(const std::weak_ptr<IApp>& app);
 
 	Status registerEvents();
-	Status onCommand(const IEventArgs& evtArgs);
-	Status onMouseMove(const IEventArgs& evtArgs);
-	Status onLButtonDown(const IEventArgs& evtArgs);
-	Status onLButtonUp(const IEventArgs& evtArgs);
 	Status onTimer(const IEventArgs& evtArgs);
-	Status dragScroll(HWND hwnd, long pos, long& prevScrollPos, bool alwaysScroll = false);
-	Status onLBAddChild(const IEventArgs& evtArgs);
-	Status onLBRemoveChild(const IEventArgs& evtArgs);
-
+	bool isMainWindow(HWND hwnd);
+	Status getProcessFilePath(DWORD processId, tstring& filePath);
+	
 private:
 	// Static Variables //
 
@@ -100,4 +107,4 @@ private:
 
 };
 
-#endif // CBA_DRAGSCROLLERCMP_H
+#endif // TEST_CMP_H

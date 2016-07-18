@@ -57,6 +57,7 @@ public:
 
 	Status getProcessFilePath(DWORD processId, tstring& filePath);
 	Status getINISectionNames(const tstring& absINIPath, std::vector<tstring>& sectionNames);
+	Status getINISectionNames(const tstring& absINIPath, tstring& sectionNames);
 	Status getINISectionKeyValues(const tstring& absINIPath, const tstring& sectionName, std::vector<tstring>& keys, std::vector<tstring>& values);
 	Status getClientRect(RECT& clientRect);
 

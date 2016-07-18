@@ -22,6 +22,9 @@
     <Filter Include="Utility">
       <UniqueIdentifier>{66d57133-5300-4fe1-b133-961ccafe2a32}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{8715365d-2ad3-4b99-893f-95f6849077e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\CBA.cpp">
@@ -99,6 +102,12 @@
     <ClCompile Include="..\..\src\Platforms\ImageBtnComponent.cpp">
       <Filter>Platforms</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Platforms\RunApplicationComponent.cpp">
+      <Filter>Platforms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Models\HwndInfo.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\CBA.h">
@@ -175,6 +184,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Platforms\ImageBtnComponent.h">
       <Filter>Platforms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platforms\RunApplicationComponent.h">
+      <Filter>Platforms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Models\HwndInfo.h">
+      <Filter>Models</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
