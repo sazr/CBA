@@ -84,7 +84,6 @@ int main(int argc, char** argv)
 	GUID g;
 	generateGUID(g);
 	std::function<Status(const IEventArgs&)> f = [](const IEventArgs& args)->Status {
-		outputStr("abc\n");
 		return S_SUCCESS;
 	};
 	EventDelegate e(f, g);

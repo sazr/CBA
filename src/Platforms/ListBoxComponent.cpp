@@ -108,7 +108,6 @@ Status ListBoxComponent::onChildMouseMove(const IEventArgs& evtArgs)
 
 Status ListBoxComponent::onChildLButtonDown(const IEventArgs& evtArgs)
 {
-	output(_T("CHILD DOWN\n"));
 	//const DispatchEventArgs& args = static_cast<const DispatchEventArgs&>(evtArgs);
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 
@@ -121,7 +120,6 @@ Status ListBoxComponent::onChildLButtonDown(const IEventArgs& evtArgs)
 
 Status ListBoxComponent::onChildLButtonUp(const IEventArgs& evtArgs)
 {
-	output(_T("CHILD UP\n"));
 	/*if (isDragging) {
 		outputStr("Killing propagation\n");
 		const DispatchEventArgs& args = static_cast<const DispatchEventArgs&>(evtArgs);

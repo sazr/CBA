@@ -47,6 +47,8 @@ Status CStatus::registerState(const tstring &stateMsg)
 
 	int nextStateTmp = nextState + 1;
 	auto res = states.emplace(std::make_pair(nextStateTmp, stateMsg));
+	/*output(_T("Storing: %d, %s, Res: %d\n"), states.size(), stateMsg.c_str(), res.second);
+	output(_T("Retrieval: [%d,%s]\n"), nextStateTmp, states[nextStateTmp].c_str());*/
 
 	return (res.second) ? Status(++nextState) : Status(res.first->first);
 }
@@ -59,7 +61,8 @@ CStatus::CStatus(const STATE &state) : state(state)
 
 const tstring CStatus::toString() const 
 {
-	return (states.find(state) == states.end()) ? states[state] : _T("Undefined");
+	//output(_T("FINDING: [%d,%s], %d\n"), state, states[state].c_str(), states.size());
+	return (states.find(state) != states.end()) ? states[state] : _T("Undefined");
 }
 
 CStatus::operator tstring() const

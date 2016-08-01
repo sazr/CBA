@@ -128,7 +128,6 @@ Status DownloadComponent::downloadFile(const std::string& url, const std::string
 	char header[80];				// holds Range header
 	DownloadEvtArgs args = { 0, 0, std::string(outputFilePath) };
 
-	output(_T("1\n"));
 	if (!isHTTPProtocol(url)) {
 		res = S_UNDEFINED_ERROR;
 		goto Cleanup;
@@ -140,7 +139,6 @@ Status DownloadComponent::downloadFile(const std::string& url, const std::string
 	preexisting file will be truncated. The length of any preexisting file
 	(after possible truncation) is returned.
 	*/
-	output(_T("2\n"));
 	filelen = openfile(url, outputFilePath, reload, fout);
 	if (filelen == ULONG_MAX) {
 		output(_T("Failed to open file\n"));
@@ -148,12 +146,10 @@ Status DownloadComponent::downloadFile(const std::string& url, const std::string
 	}
 
 	// See if internet connection is available
-	output(_T("3\n"));
 	if (InternetAttemptConnect(0) != ERROR_SUCCESS)
 		return S_UNDEFINED_ERROR;
 
 	// Open internet connection
-	output(_T("4\n"));
 	hInet = InternetOpenA("downloader", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
 	if (hInet == NULL) {
 		res = S_UNDEFINED_ERROR;
@@ -165,7 +161,6 @@ Status DownloadComponent::downloadFile(const std::string& url, const std::string
 
 	// Open the URL and request range
 	//hIurl = InternetOpenUrl(hInet, url, header, -1, INTERNET_FLAG_NO_CACHE_WRITE, 0);
-	output(_T("5\n"));
 	hIurl = InternetOpenUrlA(hInet, url.c_str(), header, strlen(header), INTERNET_FLAG_NO_CACHE_WRITE, 0);
 	if (hIurl == NULL) {
 		res = S_UNDEFINED_ERROR;
@@ -173,14 +168,12 @@ Status DownloadComponent::downloadFile(const std::string& url, const std::string
 	}
 
 	// Confirm that HTTP/1.1 or greater is supported
-	output(_T("6\n"));
 	if (!checkHTTPVersion(hIurl)) {
 		res = S_UNDEFINED_ERROR;
 		goto Cleanup;
 	}
 
 	// Get content length
-	output(_T("7\n"));
 	len = sizeof contentlen;
 	if (!HttpQueryInfoA(hIurl, HTTP_QUERY_CONTENT_LENGTH | HTTP_QUERY_FLAG_NUMBER, &contentlen, &len, NULL)) {
 		//output(_T("Fail: %d, %s\n"), GetLastError(), getLastErrorAsString().c_str());
@@ -189,7 +182,6 @@ Status DownloadComponent::downloadFile(const std::string& url, const std::string
 	}
 
 	// If existing file (if any) is not complete, then finish downloading
-	output(_T("8\n"));
 	if (filelen != contentlen && contentlen)
 	{
 		while (numrcved > 0)
@@ -221,12 +213,10 @@ Status DownloadComponent::downloadFile(const std::string& url, const std::string
 	}
 
 Cleanup:
-	output(_T("cleanup\n"));
 	fout.close();
 	InternetCloseHandle(hIurl);
 	InternetCloseHandle(hInet);
 
-	output(_T("9\n"));
 	if (/*onComplete &&*/ (contentlen + filelen) == (total + filelen)) {
 		args.curProgress = total + filelen;
 		args.totalFileSize = total + filelen;
@@ -239,7 +229,6 @@ Cleanup:
 
 Status DownloadComponent::download(const std::string& url, STATE uid)
 {
-	output(_T("1\n"));
 	STATE res = S_SUCCESS.state;
 	std::stringstream ss;
 	const size_t transferSize = 10240;
@@ -279,20 +268,16 @@ Status DownloadComponent::download(const std::string& url, STATE uid)
 		goto Cleanup;
 	}
 
-	output(_T("1\n"));
 	// Confirm that HTTP/1.1 or greater is supported
 	if (!checkHTTPVersion(hIurl)) {
 		res = S_UNDEFINED_ERROR;
 		goto Cleanup;
 	}
 
-	output(_T("2\n"));
 	while (numrcved > 0)
 	{
 		// Read a buffer of info
-		output(_T("loop 1\n"));
 		if (!InternetReadFile(hIurl, &buf, transferSize, &numrcved)) {
-			output(_T("loop 2 exit\n"));
 			res = S_UNDEFINED_ERROR;
 			goto Cleanup;
 		}
@@ -311,7 +296,6 @@ Status DownloadComponent::download(const std::string& url, STATE uid)
 	}
 
 Cleanup:
-	output(_T("cleanup\n"));
 	InternetCloseHandle(hIurl);
 	InternetCloseHandle(hInet);
 
@@ -320,7 +304,6 @@ Cleanup:
 	ss >> args.data;
 	Win32App::eventHandler(DispatchWindowComponent::translateMessage(uid, WM_DOWNLOAD_COMPLETE), args);
 	
-	output(_T("Exiting\n"));
 	return Status(res);
 }
 

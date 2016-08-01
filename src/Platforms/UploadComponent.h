@@ -27,54 +27,41 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CBA_RUNAPPCMP_H
-#define CBA_RUNAPPCMP_H
+#ifndef CBA_UPLOADCMP_H
+#define CBA_UPLOADCMP_H
 
-#include "../CBA.h"
-#include "../Component.h"
-#include "../Models/HwndInfo.h"
+#include "CBA.h"
+#include "Component.h"
+#include "AuthComponent.h"
 #include "Win32App.h"
-#include <shlwapi.h>
-#pragma comment(lib, "shlwapi")
+#include <fstream>
+#include <streambuf>
+#include <algorithm>
+#include <WinINet.h>
+#pragma comment(lib, "Wininet")
 
-//static bool icompare_pred(TCHAR a, TCHAR b)
-//{
-//	return _totlower(a) == _totlower(b);
-//}
-//
-//static bool icompare(tstring const& a, tstring const& b)
-//{
-//	if (a.length() == b.length()) {
-//		return std::equal(b.begin(), b.end(),
-//			a.begin(), icompare_pred);
-//	}
-//
-//	return false;
-//}
-
-class RunApplicationComponent : public Component
+class UploadComponent : public Component
 {
 public:
 	friend class Component;
 
 	// Static Variables //
-	static Status RESIZE_APP;
-	static const unsigned int MAX_TRIES;
+	static Status WM_UPLOAD_COMPLETE;
 
 	// Static Methods //
-	static BOOL CALLBACK enumWindows(HWND hwnd, LPARAM lParam);
+
 
 	// Class Variables //
-	std::vector<HWND> openWnds;
-	
+
+
 	// Class Methods //
-	virtual ~RunApplicationComponent();
+	virtual ~UploadComponent();
 
 	Status init(const IEventArgs& evtArgs);
 	Status terminate(const IEventArgs& evtArgs);
-	//Status tryResizeHwnd(HWND hwnd);
-	Status runApplications(const std::vector<HwndInfo>& nHwndInfos, const std::vector<HWND>& nHwndIgnoreList);
-	bool isAltTabWindow(HWND hwnd);
+
+	Status uploadFile(const tstring& domain, const tstring& domainScript, const tstring& filePath, STATE uid);
+	Status upload(const tstring& domain, const tstring& domainScript, const tstring& postData, STATE uid);
 
 protected:
 	// Static Variables //
@@ -82,20 +69,12 @@ protected:
 	// Static Methods //
 
 	// Class Variables //
-	unsigned int nTries;
-	RECT clientRect;
-	HWND mainHwnd;
-	std::vector<HwndInfo> hwndInfos;
-	std::vector<HWND> hwndIgnoreList;
 
 	// Class Methods //
-	RunApplicationComponent(const std::weak_ptr<IApp>& app);
+	UploadComponent(const std::weak_ptr<IApp>& app);
 
 	Status registerEvents();
-	Status onTimer(const IEventArgs& evtArgs);
-	bool isMainWindow(HWND hwnd);
-	//Status getProcessFilePath(DWORD processId, tstring& filePath);
-	
+
 private:
 	// Static Variables //
 
@@ -107,4 +86,4 @@ private:
 
 };
 
-#endif // TEST_CMP_H
+#endif // CBA_UPLOADCMP_H

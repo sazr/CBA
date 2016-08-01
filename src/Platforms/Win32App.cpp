@@ -32,7 +32,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Class Property Implementation //
 Status Win32App::S_WND_REGISTER_FAIL	= CStatus::registerState(_T("RegisterClassEx() failure"));
 Status Win32App::S_WND_CREATE_FAIL		= CStatus::registerState(_T("CreateWindowEx() failure"));
-Status Win32App::WM_CUSTOM_PRE_CREATE	= CStatus::registerState(_T("Custom event. Dispated prior to main HWND creation."));
+Status Win32App::WM_CUSTOM_PRE_CREATE	= CStatus::registerState(_T("Custom event. Dispatched prior to main HWND creation."));
 const tstring Win32App::WND_CLASS_NAME  = _T("Win32App");
 HINSTANCE Win32App::hinstance			= nullptr;
 

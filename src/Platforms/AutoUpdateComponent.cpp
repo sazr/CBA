@@ -134,7 +134,6 @@ Status AutoUpdateComponent::onDownloadComplete(const IEventArgs& evtArgs)
 		MAX_PATH, INIFilePath.c_str());
 
 	double curVersion = atof(curVersionStr);
-	OutputDebugStringA(curVersionStr);
 
 	if (curVersion < latestVersion)
 		auto res = dldCmp->downloadFile(dwnldFileUrl, absOutputFilePath, getExeId, false);

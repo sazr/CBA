@@ -467,7 +467,6 @@ void EasyTaskScheduler::DefineTaskSpecificVars( TASK_TRIGGER_TYPE2 triggerType, 
 
 	DWORD username_len = MAX_PATH;
 	GetUserName(userID, &username_len);
-	output(_T("USER: %s\n"), userID);
 
 	switch ( triggerType )
 	{

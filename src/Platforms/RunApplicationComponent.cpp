@@ -137,7 +137,7 @@ Status RunApplicationComponent::onTimer(const IEventArgs& evtArgs)
 		if (inIgnoreList)
 			continue;
 
-		getProcessFilePath(pid, exePath);
+		WinUtilityComponent::getProcessFilePath(pid, exePath);
 
 		for (int j = 0; j < hwndInfos.size(); j++) {
 			if (_tcscmp(hwndInfos.at(j).exePath, exePath.c_str()) != 0)
@@ -210,28 +210,27 @@ bool RunApplicationComponent::isAltTabWindow(HWND hwnd)
 	return true;
 }
 
-
-Status RunApplicationComponent::getProcessFilePath(DWORD processId, tstring& filePath)
-{
-	HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
-		PROCESS_VM_READ,
-		FALSE, processId);
-
-	if (hProcess == NULL) {
-		output(_T("Failed to retrieve process handle\n"));
-		return S_UNDEFINED_ERROR;
-	}
-
-	TCHAR exePath[MAX_PATH];
-
-	if (GetModuleFileNameEx(hProcess, NULL, exePath, MAX_PATH) == 0){
-		output(_T("Failed to get module file name: %s\n"), getLastErrorAsString().c_str());
-		return S_UNDEFINED_ERROR;
-	}
-
-	filePath = tstring(exePath);
-	CloseHandle(hProcess);
-	return S_SUCCESS;
-}
+//Status RunApplicationComponent::getProcessFilePath(DWORD processId, tstring& filePath)
+//{
+//	HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
+//		PROCESS_VM_READ,
+//		FALSE, processId);
+//
+//	if (hProcess == NULL) {
+//		output(_T("Failed to retrieve process handle\n"));
+//		return S_UNDEFINED_ERROR;
+//	}
+//
+//	TCHAR exePath[MAX_PATH];
+//
+//	if (GetModuleFileNameEx(hProcess, NULL, exePath, MAX_PATH) == 0){
+//		output(_T("Failed to get module file name: %s\n"), getLastErrorAsString().c_str());
+//		return S_UNDEFINED_ERROR;
+//	}
+//
+//	filePath = tstring(exePath);
+//	CloseHandle(hProcess);
+//	return S_SUCCESS;
+//}
 
 

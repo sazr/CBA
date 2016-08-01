@@ -108,6 +108,15 @@
     <ClCompile Include="..\..\src\Models\HwndInfo.cpp">
       <Filter>Models</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Platforms\AppUsageComponent.cpp">
+      <Filter>Platforms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Platforms\AuthComponent.cpp">
+      <Filter>Platforms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Platforms\UploadComponent.cpp">
+      <Filter>Platforms</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\CBA.h">
@@ -190,6 +199,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Models\HwndInfo.h">
       <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platforms\AppUsageComponent.h">
+      <Filter>Platforms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platforms\AuthComponent.h">
+      <Filter>Platforms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Platforms\UploadComponent.h">
+      <Filter>Platforms</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

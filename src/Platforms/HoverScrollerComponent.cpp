@@ -131,7 +131,6 @@ Status HoverScrollerComponent::onLBAddChild(const IEventArgs& evtArgs)
 
 Status HoverScrollerComponent::onShow(const IEventArgs& evtArgs)
 {
-	outputStr("SHOW\n");
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 	reset(args.hwnd);
 
@@ -147,7 +146,6 @@ Status HoverScrollerComponent::onMouseMove(const IEventArgs& evtArgs)
 
 Status HoverScrollerComponent::onMouseLeave(const IEventArgs& evtArgs)
 {
-	outputStr("MOUSE_LEAVE\n");
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 	reset(args.hwnd);
 
@@ -172,7 +170,6 @@ Status HoverScrollerComponent::onLButtonUp(const IEventArgs& evtArgs)
 
 Status HoverScrollerComponent::onTimer(const IEventArgs& evtArgs)
 {
-	outputStr("onTimer\n");
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 	
 	//reset(args.hwnd);
@@ -214,7 +211,6 @@ Status HoverScrollerComponent::hoverScroll(HWND hwnd, int xPos, int yPos)
 		if (!canScroll)
 			return S_SUCCESS;
 
-		//output(_T("In prev\n"));
 		distToScroll = scrollSpeed;
 	}
 	else if (PtInRect(&scrollNextRect, p)) {
@@ -226,11 +222,9 @@ Status HoverScrollerComponent::hoverScroll(HWND hwnd, int xPos, int yPos)
 		if (!canScroll)
 			return S_SUCCESS;
 
-		//output(_T("In next\n"));
 		distToScroll = -scrollSpeed;
 	}
 	else {
-		//output(_T("In neither\n")); 
 		KillTimer(hwnd, GetDlgCtrlID(hwnd));
 		canScroll = false;
 		timerSet = false;

@@ -104,11 +104,9 @@ Status DragScrollerComponent::registerEvents()
 
 Status DragScrollerComponent::onCommand(const IEventArgs& evtArgs)
 {
-	output(_T("DragScrollerComponent::onCommand\n"));
 	const WinEventArgs& args = static_cast<const WinEventArgs&>(evtArgs);
 	 
 	if (killOnCommand) {
-		output(_T("Stop on command\n"));
 		killOnCommand = false;
 		return DispatchWindowComponent::WM_STOP_PROPAGATION_MSG;
 	}
@@ -165,9 +163,7 @@ Status DragScrollerComponent::onLButtonDown(const IEventArgs& evtArgs)
 	lButtonDownHwnd = (HWND)args.user;
 	lButtonDownWParam = args.wParam;
 	lButtonDownLParam = args.lParam;
-	//outputStr("Set timer\n");
-	//SetTimer(lButtonDownHwnd, LBUTTONDOWN_TIMER, LBUTTONDOWN_DELAY, NULL);
-	return S_SUCCESS;  // DispatchWindowComponent::WM_STOP_PROPAGATION_MSG; // 
+	return S_SUCCESS;  
 }
 
 Status DragScrollerComponent::onLButtonUp(const IEventArgs& evtArgs)

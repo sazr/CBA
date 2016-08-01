@@ -90,15 +90,12 @@ Status ImageBtnComponent::registerBtnImages(HWND hwnd, HBITMAP upBmp, HBITMAP do
 		GetClientRect(hwnd, &clientRect);
 
 		if (lps->itemAction == ODA_SELECT && lps->itemState & ODS_SELECTED) {
-			output(_T("DOWN\n"));
 			bm = (HBITMAP)GetProp(hwnd, PROP_DOWN_BMP.c_str());
 		}
 		else if (lps->itemAction == ODA_FOCUS && lps->itemState & ODS_FOCUS) {
-			output(_T("HOVER\n"));
 			bm = (HBITMAP)GetProp(hwnd, PROP_HOVER_BMP.c_str());
 		}
 		else {
-			output(_T("UP\n"));
 			bm = (HBITMAP)GetProp(hwnd, PROP_UP_BMP.c_str());
 		}
 

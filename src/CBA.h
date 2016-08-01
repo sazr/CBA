@@ -30,6 +30,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef CBA_H
 #define CBA_H
 
+#pragma warning(disable: 4996)
 #ifndef OUTPUT_TO_FILE
 #define OUTPUT_TO_FILE	0
 #endif // OUTPUT_TO_FILE
@@ -66,11 +67,13 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 typedef std::string tstring;
 typedef std::stringstream tstringstream;
 typedef std::ofstream tofstream;
+typedef std::ifstream tifstream;
 typedef char cba_char;
 #else
 typedef std::wstring tstring;
 typedef std::wstringstream tstringstream;
 typedef std::wofstream tofstream;
+typedef std::wifstream tifstream;
 typedef wchar_t cba_char;
 #endif
 

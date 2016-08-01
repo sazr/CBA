@@ -67,7 +67,6 @@ DPIAwareComponent::~DPIAwareComponent()
 
 Status DPIAwareComponent::init(const IEventArgs& evtArgs)
 {
-	output(_T("DPIAwareComponent::init\n"));
 	HRESULT res = SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
 
 	UINT dpiX = 0, dpiY = 0;

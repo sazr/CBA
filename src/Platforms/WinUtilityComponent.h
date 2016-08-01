@@ -33,7 +33,14 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "../CBA.h"
 #include "../Component.h"
 #include <Psapi.h>
+#include <Wininet.h>
+#include <winsock2.h>
+#include <WS2tcpip.h>
+#include <time.h>
+#pragma comment(lib, "Wininet")
+#pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "Psapi")
+#pragma comment(lib, "Mincore")
 
 class WinUtilityComponent : public Component
 {
@@ -41,10 +48,17 @@ public:
 	friend class Component;
 
 	// Static Variables //
-
+	
 
 	// Static Methods //
-
+	static Status getProcessFilePath(DWORD processId, tstring& filePath, bool handleElevatedProcesses = false);
+	static Status getINISectionNames(const tstring& absINIPath, std::vector<tstring>& sectionNames);
+	static Status getINISectionNames(const tstring& absINIPath, tstring& sectionNames);
+	static Status getINISectionKeyValues(const tstring& absINIPath, const tstring& sectionName, std::vector<tstring>& keys, std::vector<tstring>& values);
+	static std::wstring WinUtilityComponent::strtowstr(const std::string &str);
+	static std::string WinUtilityComponent::wstrtostr(const std::wstring &wstr);
+	static time_t WinUtilityComponent::getTimeRemote();
+	//static Status getOSVersionString(tstring& versionStr);
 
 	// Class Variables //
 
@@ -55,10 +69,6 @@ public:
 	Status init(const IEventArgs& evtArgs);
 	Status terminate(const IEventArgs& evtArgs);
 
-	Status getProcessFilePath(DWORD processId, tstring& filePath);
-	Status getINISectionNames(const tstring& absINIPath, std::vector<tstring>& sectionNames);
-	Status getINISectionNames(const tstring& absINIPath, tstring& sectionNames);
-	Status getINISectionKeyValues(const tstring& absINIPath, const tstring& sectionName, std::vector<tstring>& keys, std::vector<tstring>& values);
 	Status getClientRect(RECT& clientRect);
 
 protected:

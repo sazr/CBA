@@ -27,54 +27,58 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef CBA_RUNAPPCMP_H
-#define CBA_RUNAPPCMP_H
+#ifndef CBA_APPUSAGECMP_H
+#define CBA_APPUSAGECMP_H
 
-#include "../CBA.h"
-#include "../Component.h"
-#include "../Models/HwndInfo.h"
+#pragma message("AppUsageComponent currently requires _CRT_SECURE_NO_WARNINGS and disable SDL check. Have you disabled SDL checks in project settings?")
+
+#include "CBA.h"
+#include "Component.h"
 #include "Win32App.h"
-#include <shlwapi.h>
-#pragma comment(lib, "shlwapi")
+#include "UploadComponent.h"
+#include "DownloadComponent.h"
+#include <time.h>
+#include "Shlobj.h"
+#pragma comment(lib, "Shell32")
 
-//static bool icompare_pred(TCHAR a, TCHAR b)
-//{
-//	return _totlower(a) == _totlower(b);
-//}
-//
-//static bool icompare(tstring const& a, tstring const& b)
-//{
-//	if (a.length() == b.length()) {
-//		return std::equal(b.begin(), b.end(),
-//			a.begin(), icompare_pred);
-//	}
-//
-//	return false;
-//}
+#define USEAGE_INFO_BUF_SIZE 8024
 
-class RunApplicationComponent : public Component
+struct SubjectInformation
+{
+	TCHAR uid[65];
+	int nMonitors;
+	OSVERSIONINFOEX versionInfo;
+	TIME_ZONE_INFORMATION timeZoneInfo;
+};
+
+struct UsageInformation
+{
+	TCHAR annotation[USEAGE_INFO_BUF_SIZE];
+	time_t timeStamp;
+	UINT msg;
+	WPARAM wParam;
+	LPARAM lParam;
+};
+
+class AppUsageComponent : public Component
 {
 public:
 	friend class Component;
 
 	// Static Variables //
-	static Status RESIZE_APP;
-	static const unsigned int MAX_TRIES;
 
 	// Static Methods //
-	static BOOL CALLBACK enumWindows(HWND hwnd, LPARAM lParam);
+	static BOOL CALLBACK monitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData);
 
 	// Class Variables //
-	std::vector<HWND> openWnds;
-	
+
 	// Class Methods //
-	virtual ~RunApplicationComponent();
+	virtual ~AppUsageComponent();
 
 	Status init(const IEventArgs& evtArgs);
 	Status terminate(const IEventArgs& evtArgs);
-	//Status tryResizeHwnd(HWND hwnd);
-	Status runApplications(const std::vector<HwndInfo>& nHwndInfos, const std::vector<HWND>& nHwndIgnoreList);
-	bool isAltTabWindow(HWND hwnd);
+	Status catalogueEvent(HWND hwnd, UINT msg, const tstring& annotation);
+	Status catalogueData(const tstring& annotation);
 
 protected:
 	// Static Variables //
@@ -82,29 +86,33 @@ protected:
 	// Static Methods //
 
 	// Class Variables //
-	unsigned int nTries;
-	RECT clientRect;
-	HWND mainHwnd;
-	std::vector<HwndInfo> hwndInfos;
-	std::vector<HWND> hwndIgnoreList;
 
 	// Class Methods //
-	RunApplicationComponent(const std::weak_ptr<IApp>& app);
+	AppUsageComponent(const std::weak_ptr<IApp>& app, const tstring& usageLogFileDirectory, const tstring& domain, const tstring& domainScript);
 
 	Status registerEvents();
-	Status onTimer(const IEventArgs& evtArgs);
-	bool isMainWindow(HWND hwnd);
-	//Status getProcessFilePath(DWORD processId, tstring& filePath);
-	
+	Status preInit(const IEventArgs& evtArgs);
+	Status writeUsageLog(const IEventArgs& evtArgs, HWND hwnd, UINT msg, const tstring& annotation);
+	//Status writeUsageLog(const tstring& annotation);
+	Status catalogueSubjectInformation();
+	Status onUploadComplete(const IEventArgs& evtArgs);
+
+	Status dumpInteractions();
 private:
 	// Static Variables //
 
 	// Static Methods //
 
 	// Class Variables //
+	/*const*/ tstring usageFilePath;
+	const tstring domain;
+	const tstring domainScript;
+	STATE uploadUid;
+	int interactionIndex;
+	std::shared_ptr<UploadComponent> upldCmp;
 
 	// Class Methods //
 
 };
 
-#endif // TEST_CMP_H
+#endif // CBA_APPUSAGECMP_H
