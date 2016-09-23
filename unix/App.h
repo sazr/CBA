@@ -1,10 +1,9 @@
-#ifndef TEST_APP_H
-#define TEST_APP_H
+#ifndef POSIX_DEMO_H
+#define POSIX_DEMO_H
 
 #include "CBA.h"
 #include "Platforms/POSIXConsoleApp.h"
 
-#pragma message("TODO: How to force all inheriters of IApp to only instantiate by static IApp::create() method")
 class App : public POSIXConsoleApp
 {
 public:
@@ -23,4 +22,4 @@ private:
 
 };
 
-#endif // TEST_APP_H
+#endif // POSIX_DEMO_H
